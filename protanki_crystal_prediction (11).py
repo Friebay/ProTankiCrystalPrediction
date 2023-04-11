@@ -125,8 +125,6 @@ pol_reg1.fit(X_poly1, y1)
 pol_reg2.fit(X_poly2, y2)
 pol_reg3.fit(X_poly3, y3)
 
-
-
 while True:
     Choosing = input("Enter 'hand' or 'image' to choose a program: ")
 
@@ -224,7 +222,7 @@ image = Image.open(BytesIO(response.content))
 width, height = image.size
 
 # Define the region to be cropped (1500 pixels from the left, 1040 pixels from the top, 200 pixels from the right)
-region = (1500, 1040, width - 190, height - 22)
+region = (1500, 1035, width - 150, height - 22)
 
 # Crop the image to the specified region
 cropped_image = image.crop(region)
@@ -260,10 +258,10 @@ for idx, text in enumerate(results['text']):
 
 if word_x is not None:
     # Define the region of interest (ROI) around the word "Battle"
-    roi = (word_x + 530, word_y, word_w + 600, word_h)
+    roi = (word_x + 530, word_y, word_w + 540, word_h)
 
     # Crop the thresholded image to the ROI
-    cropped_word = thresh[word_y:word_y + word_h, word_x + 530:word_x + word_w + 600]
+    cropped_word = thresh[word_y:word_y + word_h, word_x + 530:word_x + word_w + 540]
 
     # Save the cropped word as a new image
     cv2.imwrite('battle.png', cropped_word)
@@ -293,7 +291,7 @@ image = Image.open(BytesIO(response.content))
 width, height = image.size
 
 # Define the region to be cropped (1500 pixels from the left, 1027 pixels from the top, 200 pixels from the right)
-region = (1770, 1040, width-15, height-20)
+region = (1770, 1030, width-10, height-15)
 
 # Crop the image to the specified region
 cropped_image = image.crop(region)
@@ -302,7 +300,7 @@ cropped_image = image.crop(region)
 cropped_image.save('flags.png')
 
 # Resize the cropped image
-resized_image = cropped_image.resize((cropped_image.width * 6, cropped_image.height * 6))
+resized_image = cropped_image.resize((cropped_image.width * 8, cropped_image.height * 8))
 
 # Convert the resized image to black and white
 bw_image = ImageOps.invert(resized_image.convert('RGB')).convert('L')
@@ -311,10 +309,10 @@ bw_image = ImageOps.invert(resized_image.convert('RGB')).convert('L')
 bw_image.save("flags_BW.png")
 
 image = cv2.imread('flags_BW.png', 0)
-thresh = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+thresh = cv2.threshold(image, 0, 250, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
 
 # Use Tesseract to recognize text from the image
-flag = pytesseract.image_to_string(thresh, config='--psm 11')
+flag = pytesseract.image_to_string(thresh, config='--psm 9')
 
 # Remove non-numeric characters from the recognized text
 flags = re.findall(r'\d+', flag)
