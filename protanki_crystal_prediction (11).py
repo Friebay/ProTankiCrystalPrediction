@@ -206,6 +206,8 @@ while True:
 else:
       print("Invalid input. Please enter 'Hand' or 'Image'.")
 
+xconfig = '--psm 6 --oem 3 -c tessedit_char_whitelist=0123456789'
+
 url = input("Enter a URL: ")
 
 response = requests.get(url)
@@ -300,7 +302,7 @@ cropped_image = image.crop(region)
 cropped_image.save('flags.png')
 
 # Resize the cropped image
-resized_image = cropped_image.resize((cropped_image.width * 8, cropped_image.height * 8))
+resized_image = cropped_image.resize((cropped_image.width * 8, cropped_image.height * 6))
 
 # Convert the resized image to black and white
 bw_image = ImageOps.invert(resized_image.convert('RGB')).convert('L')
@@ -309,7 +311,7 @@ bw_image = ImageOps.invert(resized_image.convert('RGB')).convert('L')
 bw_image.save("flags_BW.png")
 
 image = cv2.imread('flags_BW.png', 0)
-thresh = cv2.threshold(image, 0, 250, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+thresh = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
 
 # Use Tesseract to recognize text from the image
 flag = pytesseract.image_to_string(thresh, config='--psm 9')
