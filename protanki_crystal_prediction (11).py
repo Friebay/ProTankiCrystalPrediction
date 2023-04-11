@@ -194,7 +194,7 @@ while True:
     #bw_image2.save("BlueBW.png")
 
     # Extract scores using Tesseract
-    #xconfig = '--psm 6 --oem 3 -c tessedit_char_whitelist=0123456789'
+    xconfig = '--psm 6 --oem 3 -c tessedit_char_whitelist=0123456789'
     #text1 = pytesseract.image_to_string(bw_image1, config=xconfig)
     #text2 = pytesseract.image_to_string(bw_image2, config=xconfig)
 
@@ -221,7 +221,7 @@ image = Image.open(BytesIO(response.content))
 width, height = image.size
 
 # Define the region to be cropped (1500 pixels from the left, 1040 pixels from the top, 200 pixels from the right)
-region = (1500, 1040, width - 190, height - 20)
+region = (1500, 1040, width - 190, height - 18)
 
 # Crop the image to the specified region
 cropped_image = image.crop(region)
@@ -230,7 +230,7 @@ cropped_image = image.crop(region)
 cropped_image.save('fund.png')
 
 # Resize the cropped image
-resized_image = cropped_image.resize((cropped_image.width * 5, cropped_image.height * 3))
+resized_image = cropped_image.resize((cropped_image.width * 5, cropped_image.height * 5))
 
 # Convert the resized image to black and white
 bw_image = ImageOps.invert(resized_image.convert('RGB')).convert('L')
@@ -258,10 +258,10 @@ for idx, text in enumerate(results['text']):
 
 if word_x is not None:
     # Define the region of interest (ROI) around the word "Battle"
-    roi = (word_x, word_y, word_w + 375, word_h)
+    roi = (word_x + 320, word_y, word_w + 347, word_h)
 
     # Crop the thresholded image to the ROI
-    cropped_word = thresh[word_y:word_y + word_h, word_x:word_x + word_w + 375]
+    cropped_word = thresh[word_y:word_y + word_h, word_x + 320:word_x + word_w + 347]
 
     # Save the cropped word as a new image
     cv2.imwrite('battle.png', cropped_word)
@@ -273,9 +273,13 @@ if word_x is not None:
 else:
     print("The word 'Battle' was not found in the image.")
 
-word_y
+# Use Tesseract to recognize text from the image
+fund = pytesseract.image_to_string('battle.png', config=xconfig)
+funds = list(map(int, fund.strip().split()))
 
-type(fund)
+results
+
+funds
 
 from PIL import Image, ImageOps
 import pytesseract
@@ -323,7 +327,7 @@ image = Image.open(BytesIO(response.content))
 width, height = image.size
 
 # Define the region to be cropped (1500 pixels from the left, 1027 pixels from the top, 200 pixels from the right)
-region = (911, 100, width - 960, height-98)
+region = (911, 100, width - 950, height-98)
 
 # Crop the image to the specified region
 cropped_image = image.crop(region)
