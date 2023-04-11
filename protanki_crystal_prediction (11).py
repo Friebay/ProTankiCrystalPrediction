@@ -169,40 +169,40 @@ while True:
     width, height = image.size
 
     # Define the regions to crop
-    regions1 = [(911, 107, width - 963, height - 552), (0, 0, width, height)]
-    regions2 = [(911, 571, width - 963, height - 17), (0, 0, width, height)]
+    #regions1 = [(911, 107, width - 963, height - 552), (0, 0, width, height)]
+    #regions2 = [(911, 571, width - 963, height - 17), (0, 0, width, height)]
 
     # Extract the regions from the image
-    image1 = image.crop(regions1[0]).crop(regions1[1])
-    image2 = image.crop(regions2[0]).crop(regions2[1])
+    #image1 = image.crop(regions1[0]).crop(regions1[1])
+    #image2 = image.crop(regions2[0]).crop(regions2[1])
 
-    image1 = image.crop(regions1[0])
-    image2 = image.crop(regions2[0])
+    #image1 = image.crop(regions1[0])
+    #image2 = image.crop(regions2[0])
 
     # Save cropped images
-    image1.save("RedCroppedScore.png")
-    image2.save("BlueCroppedScore.png")
+    #image1.save("RedCroppedScore.png")
+    #image2.save("BlueCroppedScore.png")
 
     # Resize and process cropped images
-    resized_image1 = image1.resize((image1.width * 1, image1.height * 1))
-    resized_image2 = image2.resize((image2.width * 1, image2.height * 1))
+    #resized_image1 = image1.resize((image1.width * 1, image1.height * 1))
+    #resized_image2 = image2.resize((image2.width * 1, image2.height * 1))
 
-    bw_image1 = ImageOps.invert(resized_image1.convert('RGB')).convert('L')
-    bw_image2 = ImageOps.invert(resized_image2.convert('RGB')).convert('L')
+    #bw_image1 = ImageOps.invert(resized_image1.convert('RGB')).convert('L')
+    #bw_image2 = ImageOps.invert(resized_image2.convert('RGB')).convert('L')
 
-    bw_image1.save("RedBW.png")
-    bw_image2.save("BlueBW.png")
+    #bw_image1.save("RedBW.png")
+    #bw_image2.save("BlueBW.png")
 
     # Extract scores using Tesseract
-    xconfig = '--psm 6 --oem 3 -c tessedit_char_whitelist=0123456789'
-    text1 = pytesseract.image_to_string(bw_image1, config=xconfig)
-    text2 = pytesseract.image_to_string(bw_image2, config=xconfig)
+    #xconfig = '--psm 6 --oem 3 -c tessedit_char_whitelist=0123456789'
+    #text1 = pytesseract.image_to_string(bw_image1, config=xconfig)
+    #text2 = pytesseract.image_to_string(bw_image2, config=xconfig)
 
-    red_score = list(map(int, text1.strip().split()))
-    blue_score = list(map(int, text2.strip().split()))
+    #red_score = list(map(int, text1.strip().split()))
+    #blue_score = list(map(int, text2.strip().split()))
 
     # Store scores in a list
-    scores = [red_score, blue_score]
+    #scores = [red_score, blue_score]
 
     break
 
@@ -220,8 +220,8 @@ image = Image.open(BytesIO(response.content))
 # Get the width and height of the image
 width, height = image.size
 
-# Define the region to be cropped (1500 pixels from the left, 1027 pixels from the top, 200 pixels from the right)
-region = (1500, 1040, width - 190, height-20)
+# Define the region to be cropped (1500 pixels from the left, 1040 pixels from the top, 200 pixels from the right)
+region = (1500, 1040, width - 190, height - 20)
 
 # Crop the image to the specified region
 cropped_image = image.crop(region)
@@ -245,19 +245,35 @@ custom_config = r'--psm 13 -c tessedit_char_whitelist=Badeflntu'
 
 # Perform text extraction
 results = pytesseract.image_to_data(thresh, lang='eng', output_type='dict', config='--psm 10')
+
+# Find the word "Battle" in the results and get its coordinates
+word_x, word_y, word_w, word_h = None, None, None, None
 for idx, text in enumerate(results['text']):
     if text == 'Battle':
-        x = results['left'][idx]
-        y = results['top'][idx]
-        w = results['width'][idx]
-        h = results['height'][idx]
-        print(f"Coordinates of 'Battle': x={x}, y={y}, w={w}, h={h}")
+        word_x = results['left'][idx]
+        word_y = results['top'][idx]
+        word_w = results['width'][idx]
+        word_h = results['height'][idx]
+        break
 
-cv2_imshow(thresh)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+if word_x is not None:
+    # Define the region of interest (ROI) around the word "Battle"
+    roi = (word_x, word_y, word_w + 375, word_h)
 
-results
+    # Crop the thresholded image to the ROI
+    cropped_word = thresh[word_y:word_y + word_h, word_x:word_x + word_w + 375]
+
+    # Save the cropped word as a new image
+    cv2.imwrite('battle.png', cropped_word)
+
+    # Show the cropped word
+    cv2_imshow(cropped_word)
+
+    print("The word 'Battle' has been cropped and saved as 'battle.png'.")
+else:
+    print("The word 'Battle' was not found in the image.")
+
+word_y
 
 type(fund)
 
