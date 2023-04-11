@@ -125,8 +125,7 @@ pol_reg1.fit(X_poly1, y1)
 pol_reg2.fit(X_poly2, y2)
 pol_reg3.fit(X_poly3, y3)
 
-RedFlag = int(input("Red flag amount: "))
-BlueFlag = int(input("Blue flag amount: "))
+
 
 while True:
     Choosing = input("Enter 'hand' or 'image' to choose a program: ")
@@ -209,6 +208,10 @@ while True:
 else:
       print("Invalid input. Please enter 'Hand' or 'Image'.")
 
+url = input("Enter a URL: ")
+
+response = requests.get(url)
+
 from PIL import Image, ImageOps
 import pytesseract
 import cv2
@@ -221,7 +224,7 @@ image = Image.open(BytesIO(response.content))
 width, height = image.size
 
 # Define the region to be cropped (1500 pixels from the left, 1040 pixels from the top, 200 pixels from the right)
-region = (1500, 1040, width - 190, height - 18)
+region = (1500, 1040, width - 190, height - 22)
 
 # Crop the image to the specified region
 cropped_image = image.crop(region)
@@ -230,7 +233,7 @@ cropped_image = image.crop(region)
 cropped_image.save('fund.png')
 
 # Resize the cropped image
-resized_image = cropped_image.resize((cropped_image.width * 5, cropped_image.height * 5))
+resized_image = cropped_image.resize((cropped_image.width * 8, cropped_image.height * 6))
 
 # Convert the resized image to black and white
 bw_image = ImageOps.invert(resized_image.convert('RGB')).convert('L')
@@ -241,7 +244,6 @@ bw_image.save("fund_BW.png")
 image = cv2.imread('fund_BW.png', 0)
 thresh = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
 
-custom_config = r'--psm 13 -c tessedit_char_whitelist=Badeflntu'
 
 # Perform text extraction
 results = pytesseract.image_to_data(thresh, lang='eng', output_type='dict', config='--psm 10')
@@ -258,10 +260,10 @@ for idx, text in enumerate(results['text']):
 
 if word_x is not None:
     # Define the region of interest (ROI) around the word "Battle"
-    roi = (word_x + 320, word_y, word_w + 347, word_h)
+    roi = (word_x + 530, word_y, word_w + 600, word_h)
 
     # Crop the thresholded image to the ROI
-    cropped_word = thresh[word_y:word_y + word_h, word_x + 320:word_x + word_w + 347]
+    cropped_word = thresh[word_y:word_y + word_h, word_x + 530:word_x + word_w + 600]
 
     # Save the cropped word as a new image
     cv2.imwrite('battle.png', cropped_word)
@@ -277,13 +279,12 @@ else:
 fund = pytesseract.image_to_string('battle.png', config=xconfig)
 funds = list(map(int, fund.strip().split()))
 
-results
-
 funds
 
 from PIL import Image, ImageOps
 import pytesseract
 import re
+from google.colab.patches import cv2_imshow
 
 # Open the image
 image = Image.open(BytesIO(response.content))
@@ -292,7 +293,7 @@ image = Image.open(BytesIO(response.content))
 width, height = image.size
 
 # Define the region to be cropped (1500 pixels from the left, 1027 pixels from the top, 200 pixels from the right)
-region = (1780, 1040, width-15, height-20)
+region = (1770, 1040, width-15, height-20)
 
 # Crop the image to the specified region
 cropped_image = image.crop(region)
@@ -301,7 +302,7 @@ cropped_image = image.crop(region)
 cropped_image.save('flags.png')
 
 # Resize the cropped image
-resized_image = cropped_image.resize((cropped_image.width * 4, cropped_image.height * 4))
+resized_image = cropped_image.resize((cropped_image.width * 6, cropped_image.height * 6))
 
 # Convert the resized image to black and white
 bw_image = ImageOps.invert(resized_image.convert('RGB')).convert('L')
@@ -309,16 +310,26 @@ bw_image = ImageOps.invert(resized_image.convert('RGB')).convert('L')
 # Save the black and white image
 bw_image.save("flags_BW.png")
 
+image = cv2.imread('flags_BW.png', 0)
+thresh = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+
 # Use Tesseract to recognize text from the image
-flag = pytesseract.image_to_string(bw_image, config=xconfig)
-flags = list(map(int, flag.strip().split()))
+flag = pytesseract.image_to_string(thresh, config='--psm 11')
+
+# Remove non-numeric characters from the recognized text
+flags = re.findall(r'\d+', flag)
+
+# Convert the recognized numbers to integers
+flags = list(map(int, flags))
 
 print(flag)
 print(flags)
+cv2_imshow(thresh)
 
 from PIL import Image, ImageOps
 import pytesseract
 import re
+from google.colab.patches import cv2_imshow
 
 # Open the image
 image = Image.open(BytesIO(response.content))
@@ -327,7 +338,7 @@ image = Image.open(BytesIO(response.content))
 width, height = image.size
 
 # Define the region to be cropped (1500 pixels from the left, 1027 pixels from the top, 200 pixels from the right)
-region = (911, 100, width - 950, height-98)
+region = (920, 150, width - 950, height-98)
 
 # Crop the image to the specified region
 cropped_image = image.crop(region)
@@ -336,7 +347,7 @@ cropped_image = image.crop(region)
 cropped_image.save('full_score.png')
 
 # Resize the cropped image
-resized_image = cropped_image.resize((cropped_image.width * 4, cropped_image.height * 4))
+resized_image = cropped_image.resize((cropped_image.width * 3, cropped_image.height * 3))
 
 # Convert the resized image to black and white
 bw_image = ImageOps.invert(resized_image.convert('RGB')).convert('L')
@@ -344,8 +355,11 @@ bw_image = ImageOps.invert(resized_image.convert('RGB')).convert('L')
 # Save the black and white image
 bw_image.save("full_score_BW.png")
 
+image = cv2.imread('full_score_BW.png', 0)
+thresh = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+
 # Use Tesseract to recognize text from the image
-score = pytesseract.image_to_string(bw_image, config=xconfig)
+score = pytesseract.image_to_string(thresh, config=xconfig)
 scores = list(map(int, score.strip().split()))
 
 if scores[0] < scores[1]:
@@ -372,6 +386,17 @@ for i in range(len(right_list)-1, 0, -1):
 print(scores)
 print("Left list:", left_list)
 print("Right list:", right_list)
+
+# Display the thresh image
+cv2_imshow(thresh)
+
+print(funds)
+print(flags)
+print(left_list)
+print(right_list)
+
+RedFlag = int(input("Red flag amount: "))
+BlueFlag = int(input("Blue flag amount: "))
 
 BattleFund = int(input("Enter the BattleFund amount: "))
 print('\n')
