@@ -135,6 +135,7 @@ from PIL import Image, ImageOps
 import pytesseract
 import cv2
 from google.colab.patches import cv2_imshow
+import numpy as np
 
 # Open the image
 image = Image.open(BytesIO(response.content))
@@ -143,7 +144,7 @@ image = Image.open(BytesIO(response.content))
 width, height = image.size
 
 # Define the region to be cropped (1500 pixels from the left, 1040 pixels from the top, 200 pixels from the right)
-region = (1500, 1035, width - 150, height - 22)
+region = (1500, 1035, width - 150, height - 20)
 
 # Crop the image to the specified region
 cropped_image = image.crop(region)
@@ -160,9 +161,22 @@ bw_image = ImageOps.invert(resized_image.convert('RGB')).convert('L')
 # Save the black and white image
 bw_image.save("fund_BW.png")
 
+# Read the black and white image using OpenCV
 image = cv2.imread('fund_BW.png', 0)
-thresh = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
 
+# Apply GaussianBlur to the image to reduce noise
+image = cv2.GaussianBlur(image, (3, 3), 0)
+
+# Define the sharpening kernel
+kernel = np.array([[-1, -1, -1],
+                   [-1,  9, -1],
+                   [-1, -1, -1]])
+
+# Apply the sharpening kernel to the image
+image_sharpened = cv2.filter2D(image, -1, kernel)
+
+# Perform thresholding to create a binary image
+_, thresh = cv2.threshold(image_sharpened, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
 # Perform text extraction
 results = pytesseract.image_to_data(thresh, lang='eng', output_type='dict', config='--psm 10')
@@ -196,19 +210,21 @@ fund = pytesseract.image_to_string('battle.png', config=xconfig)
 funds = list(map(int, fund.strip().split()))
 
 print(funds)
+cv2_imshow(thresh)
 
-from PIL import Image, ImageOps
+from PIL import Image, ImageOps, ImageFilter
 import pytesseract
 import re
 from google.colab.patches import cv2_imshow
+import cv2
+from io import BytesIO
+import requests
 
-# Open the image
 image = Image.open(BytesIO(response.content))
 
 # Get the width and height of the image
 width, height = image.size
 
-# Define the region to be cropped (1500 pixels from the left, 1027 pixels from the top, 200 pixels from the right)
 region = (1770, 1030, width-10, height-15)
 
 # Crop the image to the specified region
@@ -218,7 +234,7 @@ cropped_image = image.crop(region)
 cropped_image.save('flags.png')
 
 # Resize the cropped image
-resized_image = cropped_image.resize((cropped_image.width * 8, cropped_image.height * 6))
+resized_image = cropped_image.resize((cropped_image.width * 9, cropped_image.height * 6))
 
 # Convert the resized image to black and white
 bw_image = ImageOps.invert(resized_image.convert('RGB')).convert('L')
@@ -226,11 +242,28 @@ bw_image = ImageOps.invert(resized_image.convert('RGB')).convert('L')
 # Save the black and white image
 bw_image.save("flags_BW.png")
 
-image = cv2.imread('flags_BW.png', 0)
+image1 = Image.open("flags_BW.png")
+
+# Define a custom sharpening kernel
+kernel = ImageFilter.Kernel((3, 3), [0, -1, 0, -1, 5, -1, 0, -1, 0])
+
+# Apply the custom sharpening filter
+sharp_image = image1.filter(kernel)
+
+# Save the sharpened image
+sharp_image.save("flagSHARP.png")
+
+# Load the "thresh" image
+image = cv2.imread('flagSHARP.png', 0)
+
+# Apply binary thresholding
 thresh = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
 
+# Show the "thresh" image in Google Colab
+cv2_imshow(thresh)
+
 # Use Tesseract to recognize text from the image
-flag = pytesseract.image_to_string(thresh, config='--psm 9')
+flag = pytesseract.image_to_string(thresh, config='--psm 10')
 
 # Remove non-numeric characters from the recognized text
 flags = re.findall(r'\d+', flag)
@@ -251,7 +284,6 @@ image = Image.open(BytesIO(response.content))
 # Get the width and height of the image
 width, height = image.size
 
-# Define the region to be cropped (1500 pixels from the left, 1027 pixels from the top, 200 pixels from the right)
 region = (920, 150, width - 950, height-98)
 
 # Crop the image to the specified region
@@ -299,6 +331,21 @@ for i in range(len(right_list)-1, 0, -1):
 
 print("Left list:", left_list)
 print("Right list:", right_list)
+cv2_imshow(thresh)
+
+print(funds)
+print(flags)
+print(left_list)
+print(right_list)
+
+BlueFlag = flags[-1]
+
+RedFlag = flags[-2]
+
+RedTeamScore=left_list
+BlueTeamScore=right_list
+
+BattleFund=funds
 
 WinningScore = []
 LossingScore = []
@@ -306,21 +353,13 @@ LossingScore = []
 if RedFlag>BlueFlag:
   WinningFlag=RedFlag
   LossingFlag=BlueFlag
-  if(Choosing == 'Hand' or Choosing == 'hand'):
-    WinningScore=RedTeamScore
-    LossingScore=BlueTeamScore
-  else:
-    WinningScore=scores[1]
-    LossingScore=scores[0]
+  WinningScore=RedTeamScore
+  LossingScore=BlueTeamScore
 else:
   WinningFlag=BlueFlag
   LossingFlag=RedFlag
-  if(Choosing == 'Hand' or Choosing == 'hand'):
-    WinningScore=BlueTeamScore
-    LossingScore=RedTeamScore
-  else:
-    WinningScore=scores[0]
-    LossingScore=scores[1]
+  WinningScore=BlueTeamScore
+  LossingScore=RedTeamScore
 
 if RedFlag == BlueFlag:
   PredictionRatio = 1
