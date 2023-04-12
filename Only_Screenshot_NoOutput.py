@@ -210,7 +210,6 @@ fund = pytesseract.image_to_string('battle.png', config=xconfig)
 funds = list(map(int, fund.strip().split()))
 
 print(funds)
-cv2_imshow(thresh)
 
 from PIL import Image, ImageOps, ImageFilter
 import pytesseract
@@ -234,7 +233,7 @@ cropped_image = image.crop(region)
 cropped_image.save('flags.png')
 
 # Resize the cropped image
-resized_image = cropped_image.resize((cropped_image.width * 9, cropped_image.height * 6))
+resized_image = cropped_image.resize((cropped_image.width * 6, cropped_image.height * 4))
 
 # Convert the resized image to black and white
 bw_image = ImageOps.invert(resized_image.convert('RGB')).convert('L')
@@ -259,9 +258,6 @@ image = cv2.imread('flagSHARP.png', 0)
 # Apply binary thresholding
 thresh = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
 
-# Show the "thresh" image in Google Colab
-cv2_imshow(thresh)
-
 # Use Tesseract to recognize text from the image
 flag = pytesseract.image_to_string(thresh, config='--psm 10')
 
@@ -273,10 +269,13 @@ flags = list(map(int, flags))
 
 print(flags)
 
-from PIL import Image, ImageOps
+from PIL import Image, ImageOps, ImageFilter
 import pytesseract
 import re
 from google.colab.patches import cv2_imshow
+import cv2
+from io import BytesIO
+import requests
 
 # Open the image
 image = Image.open(BytesIO(response.content))
@@ -293,7 +292,7 @@ cropped_image = image.crop(region)
 cropped_image.save('full_score.png')
 
 # Resize the cropped image
-resized_image = cropped_image.resize((cropped_image.width * 3, cropped_image.height * 3))
+resized_image = cropped_image.resize((cropped_image.width * 4, cropped_image.height * 3))
 
 # Convert the resized image to black and white
 bw_image = ImageOps.invert(resized_image.convert('RGB')).convert('L')
@@ -301,7 +300,19 @@ bw_image = ImageOps.invert(resized_image.convert('RGB')).convert('L')
 # Save the black and white image
 bw_image.save("full_score_BW.png")
 
-image = cv2.imread('full_score_BW.png', 0)
+# Define a custom sharpening kernel
+kernel = ImageFilter.Kernel((3, 3), [0, -1, 0, -1, 5, -1, 0, -1, 0])
+
+# Apply the custom sharpening filter
+sharp_image = bw_image.filter(kernel)
+
+# Save the sharpened image
+sharp_image.save("full_score_SHARP.png")
+
+# Load the "sharp" image
+image = cv2.imread('full_score_SHARP.png', 0)
+
+# Apply binary thresholding
 thresh = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
 
 # Use Tesseract to recognize text from the image
@@ -345,7 +356,7 @@ RedFlag = flags[-2]
 RedTeamScore=left_list
 BlueTeamScore=right_list
 
-BattleFund=funds
+BattleFund = int(funds[0])
 
 WinningScore = []
 LossingScore = []
@@ -383,14 +394,25 @@ LossingCrystal = LossingTeamCrystals / sum(LossingScore)
 WinningIndividualCrystals = np.round(np.multiply(WinningScore, WinningCrystal), 0)
 LossingIndividualCrystals = np.round(np.multiply(LossingScore, LossingCrystal), 0)
 
+
+WinningIndividualCrystals = np.array(WinningIndividualCrystals)
+LossingIndividualCrystals = np.array(LossingIndividualCrystals)
+
+# Concatenate the arrays horizontally
+WinningResult = np.column_stack(WinningIndividualCrystals)
+LossingResult = np.column_stack(LossingIndividualCrystals)
+
+# Print the team players' crystals based on RedFlag and BlueFlag
 if RedFlag > BlueFlag:
-    print('Red Team players will get: ', ', '.join(map(str, WinningIndividualCrystals)))
-    print('\n')
-    print('Blue Team players will get: ', ', '.join(map(str, LossingIndividualCrystals)))
+    print('Red Team players will get:')
+    print('\n'.join(map(str, WinningResult)))
+    print('\nBlue Team players will get:')
+    print('\n'.join(map(str, LossingResult)))
 else:
-    print('Red Team players will get: ', ', '.join(map(str, LossingIndividualCrystals)))
-    print('\n')
-    print('Blue Team players will get: ', ', '.join(map(str, WinningIndividualCrystals)))
+    print('Red Team players will get:')
+    print('\n'.join(map(str, LossingResult)))
+    print('\nBlue Team players will get:')
+    print('\n'.join(map(str, WinningResult)))
 
 import time
 time.sleep(60000)
