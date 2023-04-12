@@ -8,8 +8,10 @@ import pytesseract
 from io import BytesIO
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
+import time
+import mss
 
-pytesseract.pytesseract.tesseract_cmd = r'C:\Users\zabit\AppData\Local\Programs\Tesseract-OCR\tesseract.exe'
+pytesseract.pytesseract.tesseract_cmd = r'OCR\tesseract.exe'
 
 def create_dataset(data):
     X = data[:, 0].reshape(-1, 1)
@@ -118,19 +120,23 @@ pol_reg3.fit(X_poly3, y3)
 
 xconfig = '--psm 6 --oem 3 -c tessedit_char_whitelist=0123456789'
 
-url = input("Enter a URL: ")
+def capture_screenshot():
+    with mss.mss() as sct:
+        # Set monitor coordinates for full screen
+        monitor = {"top": 0, "left": 0, "width": 1920, "height": 1080}
 
-response = requests.get(url)
+        # Get raw pixels from the screen, save it to a Numpy array
+        img = np.array(sct.grab(monitor))
 
-from PIL import Image, ImageOps, ImageFilter
-import pytesseract
-import re
-import cv2
-from io import BytesIO
-import requests
-import numpy as np
+        # Save the screenshot to a file
+        cv2.imwrite("screenshot.png", img)
+        print("Screenshot saved!")
 
-image = Image.open(BytesIO(response.content))
+capture_screenshot()
+
+time.sleep(5)
+
+image = Image.open("Screenshot.png")
 
 width, height = image.size
 
@@ -170,9 +176,9 @@ for idx, text in enumerate(results['text']):
         break
 
 if word_x is not None:
-    roi = (word_x + 520, word_y, word_w + 540, word_h)
+    roi = (word_x + 510, word_y, word_w + 540, word_h)
 
-    cropped_word = thresh[word_y:word_y + word_h, word_x + 520:word_x + word_w + 540]
+    cropped_word = thresh[word_y:word_y + word_h, word_x + 510:word_x + word_w + 540]
 
     cv2.imwrite('battle.png', cropped_word)
 
@@ -183,7 +189,7 @@ else:
 fund = pytesseract.image_to_string('battle.png', config=xconfig)
 funds = list(map(int, fund.strip().split()))
 
-image = Image.open(BytesIO(response.content))
+image = Image.open("Screenshot.png")
 
 width, height = image.size
 
@@ -218,7 +224,7 @@ flags = re.findall(r'\d+', flag)
 flags = list(map(int, flags))
 
 
-image = Image.open(BytesIO(response.content))
+image = Image.open("Screenshot.png")
 
 
 width, height = image.size
@@ -342,6 +348,5 @@ else:
     print('\nBlue Team players will get:')
     print('\n'.join(map(str, WinningResult)))
 
-import time
-time.sleep(60000)
+time.sleep(20)
 
