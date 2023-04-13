@@ -134,8 +134,6 @@ def capture_screenshot():
 
 capture_screenshot()
 
-time.sleep(5)
-
 image = Image.open("Screenshot.png")
 
 width, height = image.size
@@ -288,11 +286,13 @@ BattleFund = int(funds[0])
 WinningScore = []
 LossingScore = []
 
+print()
 print("Fund:", BattleFund)
 print("Red score:", RedTeamScore)
 print("Blue score:", BlueTeamScore)
 print("Red flag:", RedFlag)
 print("Blue flag:", BlueFlag)
+print()
 
 
 if RedFlag>BlueFlag:
@@ -347,6 +347,4 @@ else:
     print('\n'.join(map(str, LossingResult)))
     print('\nBlue Team players will get:')
     print('\n'.join(map(str, WinningResult)))
-
-time.sleep(20)
 
