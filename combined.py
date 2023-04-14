@@ -15,8 +15,70 @@ import keyboard
 import threading
 import time
 import winsound
+import tkinter as tk
 
 pytesseract.pytesseract.tesseract_cmd = r'OCR\tesseract.exe'
+
+def display_results(RedFlag, BlueFlag, WinningResult, LossingResult, BattleFund):
+    # Create a tkinter window
+    root = tk.Tk()
+    root.title("Results")
+
+    # Set the window to be transparent
+    root.attributes('-alpha', 0.7)  # Set the alpha value to control transparency (0.0 to 1.0)
+
+    # Set the window to be always on top
+    root.attributes('-topmost', True)
+
+    # Set the window to not have any decorations (title bar, etc.)
+    root.overrideredirect(True)
+
+    # Set the window size and position
+    window_width = 600
+    window_height = 400
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    x = 0  # Update x coordinate to 0 for left side
+    y = (screen_height - window_height) // 2
+    root.geometry(f"{window_width}x{window_height}+{x}+{y}")
+
+    # Create a tkinter text widget to display the results text
+    text_widget = tk.Text(root, font=("Arial", 14), fg="white", bg="black")
+    text_widget.pack(expand=True, fill=tk.BOTH)
+    
+    # Assuming RedFlag and BlueFlag are numerical variables
+
+    # Convert the numerical values to strings
+    red_flag_str = "Red flag: " + str(RedFlag)
+    blue_flag_str = "Blue flag: " + str(BlueFlag)
+
+    # Insert the strings into the Text widget
+    text_widget.insert(tk.END, red_flag_str)
+    text_widget.insert(tk.END, "\n")  # Insert a newline between the lines
+    text_widget.insert(tk.END, blue_flag_str)
+
+
+    # Insert the results text into the text widget
+    if RedFlag > BlueFlag:
+        text_widget.insert(tk.END, "\nRed Team players will get:\n")
+        text_widget.insert(tk.END, '\n'.join(map(str, WinningResult)) + '\n')
+        text_widget.insert(tk.END, "Blue Team players will get:\n")
+        text_widget.insert(tk.END, '\n'.join(map(str, LossingResult)) + '\n')
+    else:
+        text_widget.insert(tk.END, "\nRed Team players will get:\n")
+        text_widget.insert(tk.END, '\n'.join(map(str, LossingResult)) + '\n')
+        text_widget.insert(tk.END, "Blue Team players will get:\n")
+        text_widget.insert(tk.END, '\n'.join(map(str, WinningResult)) + '\n')
+
+    # Function to close the window when clicked
+    def close_window(event):
+        root.destroy()
+
+    # Bind a mouse click event to close the window
+    text_widget.bind("<Button-1>", close_window)
+
+    # Start tkinter event loop
+    root.mainloop()
 
 def run_script():
         def create_dataset(data):
@@ -144,13 +206,13 @@ def run_script():
 
         width, height = image.size
 
-        region = (1500, 1035, width - 150, height - 20)
+        region = (1510, 1033, width - 150, height - 18)
 
         cropped_image = image.crop(region)
 
         cropped_image.save('fund.png')
 
-        resized_image = cropped_image.resize((cropped_image.width * 8, cropped_image.height * 5))
+        resized_image = cropped_image.resize((cropped_image.width * 8, cropped_image.height * 7))
 
         bw_image = ImageOps.invert(resized_image.convert('RGB')).convert('L')
 
@@ -180,7 +242,7 @@ def run_script():
                 break
 
         if word_x is not None:
-            roi = (word_x + 510, word_y, word_w + 540, word_h)
+            roi = (word_x + 500, word_y, word_w + 540, word_h)
 
             cropped_word = thresh[word_y:word_y + word_h, word_x + 510:word_x + word_w + 540]
 
@@ -341,6 +403,8 @@ def run_script():
         # Concatenate the arrays horizontally
         WinningResult = np.column_stack(WinningIndividualCrystals)
         LossingResult = np.column_stack(LossingIndividualCrystals)
+        
+        display_results(RedFlag, BlueFlag, WinningResult, LossingResult, BattleFund)
 
         # Print the team players' crystals based on RedFlag and BlueFlag
         if RedFlag > BlueFlag:
@@ -387,4 +451,5 @@ key_event_thread.start()
 # Keep the main thread running
 while True:
     time.sleep(1)
+    
     
