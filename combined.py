@@ -1,21 +1,17 @@
 import cv2
 import re
-import requests
 import numpy as np
-import pandas as pd
 from PIL import Image, ImageOps, ImageFilter
 import pytesseract
-from io import BytesIO
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
 import time
 import mss
-import subprocess
 import keyboard
 import threading
-import time
 import winsound
 import tkinter as tk
+import os
 
 pytesseract.pytesseract.tesseract_cmd = r'OCR\tesseract.exe'
 
@@ -43,7 +39,7 @@ def display_results(RedFlag, BlueFlag, WinningResult, LossingResult, BattleFund)
     root.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
     # Create a tkinter text widget to display the results text
-    text_widget = tk.Text(root, font=("Arial", 14), fg="white", bg="black")
+    text_widget = tk.Text(root, font=("Arial", 12), fg="white", bg="black")
     text_widget.pack(expand=True, fill=tk.BOTH)
     
     # Assuming RedFlag and BlueFlag are numerical variables
@@ -51,12 +47,14 @@ def display_results(RedFlag, BlueFlag, WinningResult, LossingResult, BattleFund)
     # Convert the numerical values to strings
     red_flag_str = "Red flag: " + str(RedFlag)
     blue_flag_str = "Blue flag: " + str(BlueFlag)
+    fund_str = "Fund: " + str(BattleFund)
 
     # Insert the strings into the Text widget
     text_widget.insert(tk.END, red_flag_str)
-    text_widget.insert(tk.END, "\n")  # Insert a newline between the lines
+    text_widget.insert(tk.END, "\n")
     text_widget.insert(tk.END, blue_flag_str)
-
+    text_widget.insert(tk.END, "\n")
+    text_widget.insert(tk.END, fund_str)
 
     # Insert the results text into the text widget
     if RedFlag > BlueFlag:
@@ -81,6 +79,33 @@ def display_results(RedFlag, BlueFlag, WinningResult, LossingResult, BattleFund)
     root.mainloop()
 
 def run_script():
+        # List of file paths to delete
+    files_to_delete = [
+        "battle.png",
+        "flags.png",
+        "flags_BW.png",
+        "flagsSHARP.png",
+        "full_score.png",
+        "full_score_BW.png",
+        "full_score_SHARP.png",
+        "fund.png",
+        "fund_BW.png",
+        "screenshot.png"
+    ]
+
+    # Loop through the list of files and attempt to remove each one
+    for file_path in files_to_delete:
+        # Check if the file exists
+        if os.path.exists(file_path):
+            # Attempt to remove the file
+            try:
+                os.remove(file_path)
+            except Exception as e:
+                pass
+        else:
+            pass
+    
+    
         def create_dataset(data):
             X = data[:, 0].reshape(-1, 1)
             y = data[:, 1].reshape(-1, 1)
@@ -396,7 +421,6 @@ def run_script():
         WinningIndividualCrystals = np.round(np.multiply(WinningScore, WinningCrystal), 0)
         LossingIndividualCrystals = np.round(np.multiply(LossingScore, LossingCrystal), 0)
 
-
         WinningIndividualCrystals = np.array(WinningIndividualCrystals)
         LossingIndividualCrystals = np.array(LossingIndividualCrystals)
 
@@ -405,6 +429,8 @@ def run_script():
         LossingResult = np.column_stack(LossingIndividualCrystals)
         
         display_results(RedFlag, BlueFlag, WinningResult, LossingResult, BattleFund)
+        
+        
 
         # Print the team players' crystals based on RedFlag and BlueFlag
         if RedFlag > BlueFlag:
@@ -420,7 +446,6 @@ def run_script():
 
 # Define the key to trigger the script
 trigger_key = ","
-
 
 def play_sound():
     try:
@@ -451,5 +476,3 @@ key_event_thread.start()
 # Keep the main thread running
 while True:
     time.sleep(1)
-    
-    
