@@ -13,6 +13,7 @@ import winsound
 import tkinter as tk
 import os
 
+# OCR location. Since it's in the same location as the code, we use this kind of location thing
 pytesseract.pytesseract.tesseract_cmd = r'OCR\tesseract.exe'
 
 def display_results(RedFlag, BlueFlag, WinningResult, LossingResult, BattleFund):
@@ -30,29 +31,26 @@ def display_results(RedFlag, BlueFlag, WinningResult, LossingResult, BattleFund)
     root.overrideredirect(True)
 
     # Set the window size and position
-    window_width = 50
-    window_height = 300
+    window_width = 100
+    window_height = 500
     screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()
-    x = 0  # Update x coordinate to 0 for left side
-    y = (screen_height - window_height) // 2
-    root.geometry(f"{window_width}x{window_height}+{x}+{y}")
+    x = 0  # on the left side
+    y = (screen_height - window_height) // 2 # in the middle
+    root.geometry(f"{window_width}x{window_height}+{x}+{y}") # Set the window geometry based on window_width, window_height, x, and y values.
 
     # Create a tkinter text widget to display the results text
-    text_widget = tk.Text(root, font=("Arial", 12), fg="white", bg="black")
-    text_widget.pack(expand=True, fill=tk.BOTH)
+    text_widget = tk.Text(root, font=("Arial", 10), fg="white", bg="black")
+    text_widget.pack(expand=True, fill=tk.BOTH) # Pack the text_widget to fill both horizontally and vertically in the parent widget, allowing it to expand as needed.
 
     # Convert the numerical values to strings
-    red_flag_str = "Red flag: " + str(RedFlag)
-    blue_flag_str = "Blue flag: " + str(BlueFlag)
+    red_flag_str = "Red Flag: " + str(RedFlag)
+    blue_flag_str = "Blue Flag: " + str(BlueFlag)
     fund_str = "Fund: " + str(BattleFund)
 
-    # Insert the strings into the Text widget
-    text_widget.insert(tk.END, red_flag_str)
-    text_widget.insert(tk.END, "\n")
-    text_widget.insert(tk.END, blue_flag_str)
-    text_widget.insert(tk.END, "\n")
-    text_widget.insert(tk.END, fund_str)
+    # Insert the strings into the text widget
+    text_widget.insert(tk.END, f"{red_flag_str}\n{blue_flag_str}\n{fund_str}")
+
 
     # Insert the results text into the text widget
     if RedFlag > BlueFlag:
@@ -110,84 +108,84 @@ def run_script():
             return X, y
 
         dataset1 = np.array([
-        [1.020408163, 1.525445846],
-        [1.049019608, 1.560103292],
-        [1.086956522, 1.606557377],
-        [1.148734177, 1.673073086],
-        [1.162790698, 1.688362652],
-        [1.166666667, 1.705882353],
-        [1.192771084, 1.720207945],
-        [1.25, 1.777794404],
-        [1.25, 1.778464254],
-        [1.283842795, 1.810702138],
-        [1.333333333, 1.862068966],
-        [1.363636364, 1.887345679],
-        [1.388888889, 1.906616257],
-        [1.388888889, 1.906961193],
-        [1.4, 1.9218107],
-        [1.416666667, 1.932327167],
-        [1.428571429, 1.943669528],
-        [1.45, 1.960015379],
-        [1.485148515, 1.988570148],
-        [1.5, 2.002361275]
+        [1.020, 1.525],
+        [1.049, 1.560],
+        [1.087, 1.607],
+        [1.149, 1.673],
+        [1.163, 1.688],
+        [1.167, 1.706],
+        [1.193, 1.720],
+        [1.250, 1.778],
+        [1.250, 1.778],
+        [1.284, 1.811],
+        [1.333, 1.862],
+        [1.364, 1.887],
+        [1.389, 1.907],
+        [1.389, 1.907],
+        [1.400, 1.922],
+        [1.417, 1.932],
+        [1.429, 1.944],
+        [1.450, 1.960],
+        [1.485, 1.989],
+        [1.500, 2.002]
     ])
 
         X1, y1 = create_dataset(dataset1)
 
         dataset2 = np.array([
-        [1.485148515, 1.988570148],
-        [1.5, 2.002361275],
-        [1.8, 2.214345992],
-        [1.851851852, 2.248992748],
-        [1.886792453, 2.268008232],
-        [1.930731707, 2.294513121],
-        [2.040816327, 2.356053013],
-        [2.25, 2.458695652],
-        [2.5, 2.594771242],
-        [2.729508197, 2.659179175],
-        [3, 2.750310559],
-        [3, 2.75708502],
-        [3.125, 2.787451533],
-        [3.333333333, 2.845689493],
-        [3.511363636, 2.891874702],
-        [4, 3.010186757],
-        [4.666666667, 3.118362124],
-        [5, 3.167769376],
-        [5, 3.168224299],
-        [5.479452055, 3.228808536],
-        [5.800947867, 3.264898919],
-        [5.941176471, 3.281713344],
-        [6, 3.287804878],
-        [6.301369863, 3.315228089],
-        [7.5, 3.411666667],
-        [7.5, 3.412280702],
-        [8, 3.443908323]
+        [1.485, 1.989],
+        [1.500, 2.002],
+        [1.800, 2.214],
+        [1.852, 2.249],
+        [1.887, 2.268],
+        [1.931, 2.295],
+        [2.041, 2.356],
+        [2.250, 2.459],
+        [2.500, 2.595],
+        [2.730, 2.659],
+        [3.000, 2.750],
+        [3.000, 2.757],
+        [3.125, 2.787],
+        [3.333, 2.846],
+        [3.511, 2.892],
+        [4.000, 3.010],
+        [4.667, 3.118],
+        [5.000, 3.168],
+        [5.000, 3.168],
+        [5.479, 3.229],
+        [5.801, 3.265],
+        [5.941, 3.282],
+        [6.000, 3.288],
+        [6.301, 3.315],
+        [7.500, 3.412],
+        [7.500, 3.412],
+        [8.000, 3.444]
     ])
 
         X2, y2 = create_dataset(dataset2)
 
         dataset3 = np.array([
-        [8,3.443908323],
-        [8.333333333,3.462385899],
-        [8.5,3.474226804],
-        [9.336448598,3.516258583],
-        [10,3.55],
-        [10,3.551210428],
-        [11.11111111,3.586206897],
-        [11.11111111,3.59112426],
-        [12.33333333,3.6250295],
-        [14,3.666483456],
-        [14.27142857,3.672679505],
-        [15.71428571,3.704481793],
-        [16.66666667,3.720626632],
-        [21.35714286,3.776863961],
-        [22,3.782079165],
-        [29,3.834249804],
-        [30,3.83880597],
-        [33.33333333,3.854470426],
-        [34.44827586,3.858971552],
-        [37.5,3.871282417],
-        [50,3.902043932]
+        [8.000, 3.444],
+        [8.333, 3.462],
+        [8.500, 3.474],
+        [9.336, 3.516],
+        [10.000, 3.550],
+        [10.000, 3.551],
+        [11.111, 3.586],
+        [11.111, 3.591],
+        [12.333, 3.625],
+        [14.000, 3.666],
+        [14.271, 3.673],
+        [15.714, 3.704],
+        [16.667, 3.721],
+        [21.357, 3.777],
+        [22.000, 3.782],
+        [29.000, 3.834],
+        [30.000, 3.839],
+        [33.333, 3.854],
+        [34.448, 3.859],
+        [37.500, 3.871],
+        [50.000, 3.902]
     ])
 
         X3, y3 = create_dataset(dataset3)
@@ -225,43 +223,56 @@ def run_script():
 
         capture_screenshot()
 
+        # Open image
         image = Image.open("Screenshot.png")
 
+        # Get image size
         width, height = image.size
 
+        # Crop image
         region = (1490, 1033, width - 150, height - 18)
-
         cropped_image = image.crop(region)
 
+        # Save cropped image
         cropped_image.save('fund.png')
 
+        # Resize cropped image
         resized_image = cropped_image.resize((cropped_image.width * 8, cropped_image.height * 7))
 
+        # Invert colors and convert to grayscale
         bw_image = ImageOps.invert(resized_image.convert('RGB')).convert('L')
 
+        # Save black and white image
         bw_image.save("fund_BW.png")
 
+        # Read image using OpenCV
         image = cv2.imread('fund_BW.png', 0)
 
+        # Apply Gaussian blur
         image = cv2.GaussianBlur(image, (3, 3), 0)
 
-        kernel = np.array([[-1, -1, -1],
-                        [-1,  9, -1],
-                        [-1, -1, -1]])
-
+        # Define sharpening kernel
+        kernel = np.array([[-1, -1, -1], [-1, 10, -1], [-1, -1, -1]])
+        
+        # Apply sharpening filter
         image_sharpened = cv2.filter2D(image, -1, kernel)
 
+        # Apply Otsu's thresholding
         _, thresh = cv2.threshold(image_sharpened, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
+        # Perform OCR using Tesseract
         results = pytesseract.image_to_data(thresh, lang='eng', output_type='dict', config='--psm 10')
         
+        print(results)
+                
+        # The main issue of this whole code is that pytesseract doesn't find the word "Battle" so I added this little code to make sure that the word "Battle" is indeed in the cropped picture
         #cv2.imshow('Window Name', thresh)
         #cv2.waitKey(0)
         #cv2.destroyAllWindows()
 
         word_x, word_y, word_w, word_h = None, None, None, None
         for idx, text in enumerate(results['text']):
-            if text == 'Battle':
+            if text in ['Battle', 'wattle', 'bottle', 'battle', 'satte', 'sattle', 'cattle']:
                 word_x = results['left'][idx]
                 word_y = results['top'][idx]
                 word_w = results['width'][idx]
@@ -269,6 +280,7 @@ def run_script():
                 break
 
         if word_x is not None:
+            # Move to the right of the word "Battle" so that only the fund would be visable
             roi = (word_x + 475, word_y, word_w + 540, word_h)
 
             cropped_word = thresh[word_y:word_y + word_h, word_x + 510:word_x + word_w + 540]
@@ -281,44 +293,28 @@ def run_script():
 
         fund = pytesseract.image_to_string('battle.png', config=xconfig)
         funds = list(map(int, fund.strip().split()))
+        
+        print(111111111111111111111111111111)
 
         image = Image.open("Screenshot.png")
-
         width, height = image.size
-
         region = (1770, 1030, width-10, height-15)
-
         cropped_image = image.crop(region)
-
         cropped_image.save('flags.png')
-
         resized_image = cropped_image.resize((cropped_image.width * 6, cropped_image.height * 4))
-
         bw_image = ImageOps.invert(resized_image.convert('RGB')).convert('L')
-
         bw_image.save("flags_BW.png")
-
         image1 = Image.open("flags_BW.png")
-
         kernel = ImageFilter.Kernel((3, 3), [0, -1, 0, -1, 5, -1, 0, -1, 0])
-
         sharp_image = image1.filter(kernel)
-
         sharp_image.save("flagSHARP.png")
-
         image = cv2.imread('flagSHARP.png', 0)
-
         thresh = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
-
         flag = pytesseract.image_to_string(thresh, config='--psm 10')
-
         flags = re.findall(r'\d+', flag)
-
         flags = list(map(int, flags))
-
-
+        
         image = Image.open("Screenshot.png")
-
 
         width, height = image.size
         region = (920, 150, width - 950, height - 98)
@@ -328,6 +324,7 @@ def run_script():
 
         resized_image = cropped_image.resize((cropped_image.width * 4, cropped_image.height * 3))
 
+        print(222222222222222222222222222)
 
         bw_image = ImageOps.invert(resized_image.convert('RGB')).convert('L')
         bw_image.save("full_score_BW.png")
@@ -367,13 +364,12 @@ def run_script():
             if right_list[i] >= right_list[i-1]:
                 right_list.pop(i)
 
-
-
         BlueFlag = flags[-1]
 
         RedFlag = flags[-2]
 
         RedTeamScore=left_list
+        
         BlueTeamScore=right_list
 
         BattleFund = int(funds[0])
