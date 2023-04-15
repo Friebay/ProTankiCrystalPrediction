@@ -206,6 +206,8 @@ def run_script():
         pol_reg1.fit(X_poly1, y1)
         pol_reg2.fit(X_poly2, y2)
         pol_reg3.fit(X_poly3, y3)
+        
+        #wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
         xconfig = '--psm 6 --oem 3 -c tessedit_char_whitelist=0123456789'
 
@@ -222,6 +224,8 @@ def run_script():
                 print("Screenshot saved!")
 
         capture_screenshot()
+        
+        #wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
         # Open image
         image = Image.open("Screenshot.png")
@@ -270,7 +274,7 @@ def run_script():
         #cv2.waitKey(0)
         #cv2.destroyAllWindows()
 
-        word_x, word_y, word_w, word_h = None, None, None, None
+        word_x, word_y, word_w, word_h = None, None, None, None # Trying to get "Battle" coordinates
         for idx, text in enumerate(results['text']):
             if text in ['Battle', 'wattle', 'bottle', 'battle', 'satte', 'sattle', 'cattle']:
                 word_x = results['left'][idx]
@@ -291,11 +295,10 @@ def run_script():
         else:
             print("The word 'Battle' was not found in the image.")
 
-        fund = pytesseract.image_to_string('battle.png', config=xconfig)
+        fund = pytesseract.image_to_string('battle.png', config=xconfig)# OCRing "Battle fund" numbers
         funds = list(map(int, fund.strip().split()))
-        
-        print(111111111111111111111111111111)
 
+        # Almost the same as above
         image = Image.open("Screenshot.png")
         width, height = image.size
         region = (1770, 1030, width-10, height-15)
@@ -305,66 +308,66 @@ def run_script():
         bw_image = ImageOps.invert(resized_image.convert('RGB')).convert('L')
         bw_image.save("flags_BW.png")
         image1 = Image.open("flags_BW.png")
-        kernel = ImageFilter.Kernel((3, 3), [0, -1, 0, -1, 5, -1, 0, -1, 0])
-        sharp_image = image1.filter(kernel)
+        kernel = ImageFilter.Kernel((3, 3), [0, -1, 0, -1, 5, -1, 0, -1, 0])#sharpening
+        sharp_image = image1.filter(kernel)#applying sharpening
         sharp_image.save("flagSHARP.png")
         image = cv2.imread('flagSHARP.png', 0)
-        thresh = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
-        flag = pytesseract.image_to_string(thresh, config='--psm 10')
+        thresh = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]# black and white, a lot of exposure so that text is clearly seen
+        flag = pytesseract.image_to_string(thresh, config='--psm 10') #OCRing flag numbers
         flags = re.findall(r'\d+', flag)
         flags = list(map(int, flags))
         
+        # Almost the same as above
         image = Image.open("Screenshot.png")
-
         width, height = image.size
         region = (920, 150, width - 950, height - 98)
         cropped_image = image.crop(region)
         cropped_image.save('full_score.png')
-
-
         resized_image = cropped_image.resize((cropped_image.width * 4, cropped_image.height * 3))
-
-        print(222222222222222222222222222)
-
         bw_image = ImageOps.invert(resized_image.convert('RGB')).convert('L')
         bw_image.save("full_score_BW.png")
-
-
         kernel = ImageFilter.Kernel((3, 3), [0, -1, 0, -1, 5, -1, 0, -1, 0])
         sharp_image = bw_image.filter(kernel)
         sharp_image.save("full_score_SHARP.png")
-
-
         image = cv2.cvtColor(np.array(sharp_image), cv2.COLOR_GRAY2BGR)
-
-
         gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         _, thresh = cv2.threshold(gray_image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-
-
         score = pytesseract.image_to_string(thresh, config=xconfig)
         scores = list(map(int, score.strip().split()))
 
         print(33333333333333333333333333)
         
+        # Check if the first element is smaller than the second element, remove if necessary
         if scores[0] < scores[1]:
             scores.pop(0)
 
-        original_list = scores
+        # Create a copy of the original list
+        original_list = scores.copy()
 
+        # Check if the first element of the copied list is smaller than the second element, remove if necessary
         if original_list[0] < original_list[1]:
             original_list.pop(0)
 
+        # Divide the scores into two teams by finding where one number is bigger than the previous one
         for i in range(1, len(original_list)):
             if original_list[i - 1] < original_list[i]:
                 left_list = original_list[:i]
                 right_list = original_list[i:]
                 break
 
+        # Remove elements from right_list that are greater than or equal to the element immediately before them
         for i in range(len(right_list)-1, 0, -1):
             if right_list[i] >= right_list[i-1]:
                 right_list.pop(i)
                 
+        # Remove elements from right_list that are greater than or equal to the element immediately before them
+        for i in range(len(right_list)-1, 0, -1):
+            if left_list[i] >= left_list[i-1]:
+                left_list.pop(i)
+
+        #wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+        
+        # Some bug here
         print(444444444444444444444444)
         
         print(flag)
@@ -373,14 +376,13 @@ def run_script():
         print(555555555555555555555)
         RedFlag = flags[-2]
         
+        #wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
         
-
         RedTeamScore=left_list
-        
         BlueTeamScore=right_list
-
+        
         BattleFund = int(funds[0])
-
+        
         WinningScore = []
         LossingScore = []
         
@@ -391,7 +393,6 @@ def run_script():
         print("Red flag:", RedFlag)
         print("Blue flag:", BlueFlag)
         print()
-
 
         if RedFlag>BlueFlag:
             WinningFlag=RedFlag
@@ -435,9 +436,7 @@ def run_script():
         
         display_results(RedFlag, BlueFlag, WinningResult, LossingResult, BattleFund)
         
-        
-
-        # Print the team players' crystals based on RedFlag and BlueFlag
+        # Print the team players crystals
         if RedFlag > BlueFlag:
             print('Red Team players will get:')
             print('\n'.join(map(str, WinningResult)))
@@ -451,7 +450,7 @@ def run_script():
 
 def play_sound():
     try:
-        # Play a beep sound with frequency 1000Hz and duration 100ms
+        # Play a beep sound
         winsound.Beep(1000, 100)
     except Exception as e:
         print(f"Failed to play sound. Error: {e}")
