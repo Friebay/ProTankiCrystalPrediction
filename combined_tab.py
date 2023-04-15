@@ -345,7 +345,8 @@ def run_script():
         score = pytesseract.image_to_string(thresh, config=xconfig)
         scores = list(map(int, score.strip().split()))
 
-
+        print(33333333333333333333333333)
+        
         if scores[0] < scores[1]:
             scores.pop(0)
 
@@ -363,10 +364,16 @@ def run_script():
         for i in range(len(right_list)-1, 0, -1):
             if right_list[i] >= right_list[i-1]:
                 right_list.pop(i)
+                
+        print(444444444444444444444444)
+        
+        print(flag)
 
         BlueFlag = flags[-1]
-
+        print(555555555555555555555)
         RedFlag = flags[-2]
+        
+        
 
         RedTeamScore=left_list
         
@@ -376,7 +383,7 @@ def run_script():
 
         WinningScore = []
         LossingScore = []
-
+        
         print()
         print("Fund:", BattleFund)
         print("Red score:", RedTeamScore)
