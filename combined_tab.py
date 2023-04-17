@@ -276,7 +276,7 @@ def run_script():
 
         word_x, word_y, word_w, word_h = None, None, None, None # Trying to get "Battle" coordinates
         for idx, text in enumerate(results['text']):
-            if text in ['Battle', 'wattle', 'bottle', 'battle', 'satte', 'sattle', 'cattle']:
+            if text in ['Battle', 'wattle', 'bottle', 'battle', 'satte', 'sattle', 'cattle', 'attic', 'atte', 'seattle', 'pattie']:
                 word_x = results['left'][idx]
                 word_y = results['top'][idx]
                 word_w = results['width'][idx]
