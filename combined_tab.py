@@ -14,7 +14,7 @@ import tkinter as tk
 import os
 
 # OCR location. Since it's in the same location as the code, we use this kind of location thing
-pytesseract.pytesseract.tesseract_cmd = r'OCR\tesseract.exe'
+pytesseract.pytesseract.tesseract_cmd = r'C:\Users\zabit\AppData\Local\Programs\Tesseract-OCR\tesseract.exe'
 
 def display_results(RedFlag, BlueFlag, WinningResult, LossingResult, BattleFund):
     # Create a tkinter window
@@ -234,7 +234,7 @@ def run_script():
         width, height = image.size
 
         # Crop image
-        region = (1490, 1033, width - 150, height - 18)
+        region = (1400, 1030, width - 250, height - 18)
         cropped_image = image.crop(region)
 
         # Save cropped image
