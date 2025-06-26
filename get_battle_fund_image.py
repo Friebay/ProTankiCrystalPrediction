@@ -85,8 +85,7 @@ def take_screenshot():
         cropped_screenshot = screenshot.crop((1400, 1015, screen_width, screen_height))
         
         # Generate a filename with timestamp
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"protanki_screenshot_{timestamp}.png"
+        filename = f"protanki_screenshot.png"
         
         # Get the directory where this script is located
         script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -159,7 +158,7 @@ def take_screenshot():
             diamond_crop = screenshot_for_crop.crop((crop_x1, crop_y1, crop_x2, crop_y2))
             
             # Save the diamond-focused crop
-            diamond_filename = f"diamond_crop_{timestamp}.png"
+            diamond_filename = f"diamond_crop.png"
             diamond_filepath = os.path.join(script_dir, diamond_filename)
             diamond_crop.save(diamond_filepath, optimize=False, compress_level=0)
             
