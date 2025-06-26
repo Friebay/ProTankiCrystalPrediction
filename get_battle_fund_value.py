@@ -34,7 +34,7 @@ _, thresh = cv2.threshold(resized, 150, 255, cv2.THRESH_BINARY_INV)
 thresh = cv2.bitwise_not(thresh)
 
 # Run Tesseract OCR
-custom_config = r'--oem 3 --psm 6 outputbase digits'
+custom_config = r'--oem 3 --psm 6 -c tessedit_char_whitelist=0123456789'
 text = pytesseract.image_to_string(thresh, config=custom_config)
 
 print("Extracted Text:", text)

@@ -1,3 +1,4 @@
 *.png
 red_scoreboard.txt
 blue_scoreboard.txt
+*.pyc

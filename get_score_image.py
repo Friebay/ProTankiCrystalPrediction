@@ -23,9 +23,7 @@ def take_screenshot():
         # Crop the image to the specified region (from x=1700 to right edge, y=1025 to bottom)
         cropped_screenshot = screenshot.crop((1700, 1025, 1900, 1055))
         
-        # Generate a filename with timestamp
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"flag_crop_{timestamp}.png"
+        filename = f"flag_crop.png"
         
         # Get the directory where this script is located
         script_dir = os.path.dirname(os.path.abspath(__file__))

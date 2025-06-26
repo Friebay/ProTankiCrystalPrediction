@@ -59,11 +59,32 @@ def run_score_screenshot():
         print(f"✗ Error in score screenshot: {e}")
         return False
 
+def run_scoreboard_screenshot():
+    """Run the take_screenshot function from get_scoreboard_image.py"""
+    try:
+        print("\n" + "="*60)
+        print("STEP 3: Taking Scoreboard Screenshot")
+        print("="*60)
+        
+        from get_scoreboard_image import take_screenshot as scoreboard_screenshot
+        result = scoreboard_screenshot()
+        
+        if result:
+            print(f"✓ Scoreboard screenshot completed successfully: {result}")
+            return True
+        else:
+            print("✗ Scoreboard screenshot failed")
+            return False
+            
+    except Exception as e:
+        print(f"✗ Error in scoreboard screenshot: {e}")
+        return False
+
 def run_ratio_calculation():
     """Run the main function from get_ratio_value.py"""
     try:
         print("\n" + "="*60)
-        print("STEP 3: Calculating Ratio and Crystal Prediction")
+        print("STEP 4: Calculating Ratio and Crystal Prediction")
         print("="*60)
         
         from get_ratio_value import main as ratio_main
@@ -99,7 +120,15 @@ def main():
     # Add a small delay between steps
     time.sleep(1)
     
-    # Step 3: Ratio Calculation and Crystal Prediction
+    # Step 3: Scoreboard Screenshot
+    if not run_scoreboard_screenshot():
+        print("\n❌ Workflow stopped due to scoreboard screenshot failure")
+        return False
+    
+    # Add a small delay between steps
+    time.sleep(1)
+    
+    # Step 4: Ratio Calculation and Crystal Prediction
     if not run_ratio_calculation():
         print("\n❌ Workflow stopped due to ratio calculation failure")
         return False
