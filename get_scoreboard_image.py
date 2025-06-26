@@ -191,12 +191,42 @@ def take_screenshot():
                 print(f"Blue scoreboard saved as: {blue_scoreboard_path}")
                 print(f"Blue crop coordinates: ({blue_top_left_x}, {blue_top_left_y}) to ({blue_bottom_right_x}, {blue_bottom_right_y})")
                 
+                # Run OCR processing if enabled
+                if OCR:
+                    print("\nOCR is enabled. Running get_scoreboard_value.py...")
+                    try:
+                        # Get the directory where this script is located
+                        script_dir = os.path.dirname(os.path.abspath(__file__))
+                        ocr_script_path = os.path.join(script_dir, "get_scoreboard_value.py")
+                        
+                        # Run the OCR script
+                        result = subprocess.run([sys.executable, ocr_script_path], 
+                                              capture_output=True, text=True, cwd=script_dir)
+                        
+                        if result.returncode == 0:
+                            print("Scoreboard OCR processing completed successfully!")
+                            if result.stdout:
+                                print("OCR output:")
+                                print(result.stdout)
+                        else:
+                            print("Scoreboard OCR processing failed!")
+                            if result.stderr:
+                                print("Error output:")
+                                print(result.stderr)
+                                
+                    except Exception as ocr_error:
+                        print(f"Error running scoreboard OCR script: {ocr_error}")
+                else:
+                    print("\nOCR is disabled. Skipping scoreboard OCR processing.")
+                
             else:
                 print("\nCannot create scoreboard crops - one or both score images not found")
                 if not red_result:
                     print("  score_red.png not found")
                 if not blue_result:
                     print("  score_blue.png not found")
+                if OCR:
+                    print("OCR is enabled but score images not found, skipping OCR processing.")
         else:
             print("Score image detection failed.")
         
