@@ -65,14 +65,14 @@ def get_team_scores(image_path, debug=False):
 
     # --- RED TEAM SCORE ---
     # Red wraps around the 0/180 degree mark in the HSV color space, so we need two ranges.
-    lower_red1 = np.array([5, 153, 150])
-    upper_red1 = np.array([12, 195, 255])
+    lower_red1 = np.array([5, 153, 200])
+    upper_red1 = np.array([10, 195, 255])
     lower_red2 = np.array([170, 100, 150])
     upper_red2 = np.array([179, 255, 255])
 
     # --- BLUE TEAM SCORE ---
-    lower_blue = np.array([100, 100, 150])
-    upper_blue = np.array([180, 255, 255])
+    lower_blue = np.array([103, 173, 150])
+    upper_blue = np.array([108, 204, 255])
 
     # 4. Create masks to isolate colors
     red_mask1 = cv2.inRange(hsv_img, lower_red1, upper_red1)
@@ -146,7 +146,7 @@ def ocr_from_mask(mask, output_dir, base_name, color_name, debug=False):
     
     # Resize the image to be 2x bigger for better OCR accuracy
     height, width = inverted_mask.shape
-    resized_mask = cv2.resize(inverted_mask, (width * 2, height * 2), interpolation=cv2.INTER_NEAREST)
+    resized_mask = cv2.resize(inverted_mask, (width * 3, height * 3), interpolation=cv2.INTER_NEAREST)
     
     # Save step 6: Resized mask for OCR
     if debug and output_dir and base_name:

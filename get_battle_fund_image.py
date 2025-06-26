@@ -98,10 +98,24 @@ def take_screenshot():
         print("Playing sound notification...")
         # Play MP3 file
         try:
-            from playsound import playsound
+            import pygame
+            pygame.mixer.init()
             # Assuming screenshot.mp3 is in the same directory as the script
             sound_path = os.path.join(script_dir, "screenshot.mp3")
-            playsound(sound_path)
+            pygame.mixer.music.load(sound_path)
+            pygame.mixer.music.play()
+            # Wait for the sound to finish playing
+            while pygame.mixer.music.get_busy():
+                time.sleep(0.1)
+            pygame.mixer.quit()
+        except ImportError:
+            print("pygame not installed. Trying alternative method...")
+            try:
+                import winsound
+                # Use system default sound since winsound doesn't support MP3
+                winsound.MessageBeep(winsound.MB_OK)
+            except Exception as sound_error:
+                print(f"Could not play sound: {sound_error}")
         except Exception as sound_error:
             print(f"Could not play sound: {sound_error}")
         
@@ -196,11 +210,25 @@ if __name__ == "__main__":
     # Play ready sound when program loads
     print("Program loaded. Playing ready notification...")
     try:
-        from playsound import playsound
+        import pygame
+        pygame.mixer.init()
         # Get the directory where this script is located
         script_dir = os.path.dirname(os.path.abspath(__file__))
         ready_sound_path = os.path.join(script_dir, "ready.mp3")
-        playsound(ready_sound_path)
+        pygame.mixer.music.load(ready_sound_path)
+        pygame.mixer.music.play()
+        # Wait for the sound to finish playing
+        while pygame.mixer.music.get_busy():
+            time.sleep(0.1)
+        pygame.mixer.quit()
+    except ImportError:
+        print("pygame not installed. Trying alternative method...")
+        try:
+            import winsound
+            # Use system default sound since winsound doesn't support MP3
+            winsound.MessageBeep(winsound.MB_OK)
+        except Exception as sound_error:
+            print(f"Could not play ready sound: {sound_error}")
     except Exception as sound_error:
         print(f"Could not play ready sound: {sound_error}")
     

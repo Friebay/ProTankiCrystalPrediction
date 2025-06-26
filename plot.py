@@ -23,12 +23,12 @@ def predict_crystal_ratio(flag_ratio, spline):
     max_x = spline.x.max()
     
     if flag_ratio < min_x:
-        print(f"Warning: Flag ratio {flag_ratio} is below minimum value {min_x}. Using minimum value.")
-        flag_ratio = min_x
+        print(f"Warning: Flag ratio {flag_ratio} is below minimum value {min_x}. Returning 1.")
+        return 1
     elif flag_ratio > max_x:
-        print(f"Warning: Flag ratio {flag_ratio} is above maximum value {max_x}. Using maximum value.")
-        flag_ratio = max_x
-    
+        print(f"Warning: Flag ratio {flag_ratio} is above maximum value {max_x}. Returning 4.")
+        return 4
+
     # Predict using the spline
     crystal_ratio = spline(flag_ratio)
     return crystal_ratio

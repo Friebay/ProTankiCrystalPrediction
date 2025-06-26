@@ -20,8 +20,8 @@ def take_screenshot():
         # Get screen width and height
         screen_width, screen_height = screenshot.size
 
-        # Crop the image to the specified region (from x=1700 to right edge, y=1015 to bottom)
-        cropped_screenshot = screenshot.crop((1700, 1015, screen_width, screen_height))
+        # Crop the image to the specified region (from x=1700 to right edge, y=1025 to bottom)
+        cropped_screenshot = screenshot.crop((1700, 1025, 1900, 1055))
         
         # Generate a filename with timestamp
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
