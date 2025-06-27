@@ -20,9 +20,9 @@ sys.path.insert(0, script_dir)
 def run_battle_fund_screenshot():
     """Run the take_screenshot function from get_battle_fund_image.py"""
     try:
-        print("="*60)
+
         print("STEP 1: Taking Battle Fund Screenshot")
-        print("="*60)
+
         
         from get_battle_fund_image import take_screenshot as battle_fund_screenshot
         result = battle_fund_screenshot()
@@ -41,9 +41,9 @@ def run_battle_fund_screenshot():
 def run_score_screenshot():
     """Run the take_screenshot function from get_score_image.py"""
     try:
-        print("\n" + "="*60)
+
         print("STEP 2: Taking Score Screenshot")
-        print("="*60)
+
         
         from get_score_image import take_screenshot as score_screenshot
         result = score_screenshot()
@@ -62,9 +62,9 @@ def run_score_screenshot():
 def run_scoreboard_screenshot():
     """Run the take_screenshot function from get_scoreboard_image.py"""
     try:
-        print("\n" + "="*60)
+
         print("STEP 3: Taking Scoreboard Screenshot")
-        print("="*60)
+
         
         from get_scoreboard_image import take_screenshot as scoreboard_screenshot
         result = scoreboard_screenshot()
@@ -83,9 +83,9 @@ def run_scoreboard_screenshot():
 def run_ratio_calculation():
     """Run the main function from get_ratio_value.py"""
     try:
-        print("\n" + "="*60)
+
         print("STEP 4: Calculating Ratio and Crystal Prediction")
-        print("="*60)
+
         
         from get_ratio_value import main as ratio_main
         ratio_main()
@@ -137,44 +137,55 @@ def main():
     end_time = time.time()
     execution_time = end_time - start_time
     
-    print("\n" + "="*80)
+
     print("🎉 WORKFLOW COMPLETED SUCCESSFULLY!")
     print(f"⏱️  Total execution time: {execution_time:.2f} seconds")
-    print("="*80)
+
     
     return True
+
+def play_ready_sound():
+    """Play the ready notification sound"""
+    try:
+        import pygame
+        pygame.mixer.init()
+        # Get the directory where this script is located
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        ready_sound_path = os.path.join(script_dir, "sounds\\ready.mp3")
+        pygame.mixer.music.load(ready_sound_path)
+        pygame.mixer.music.play()
+        # Wait for the sound to finish playing
+        while pygame.mixer.music.get_busy():
+            time.sleep(0.1)
+        pygame.mixer.quit()
+    except Exception as sound_error:
+        print(f"Could not play ready sound: {sound_error}")
 
 if __name__ == "__main__":
     try:
         # Play ready sound when program loads
         print("Program loaded. Playing ready notification...")
-        try:
-            import pygame
-            pygame.mixer.init()
-            # Get the directory where this script is located
-            script_dir = os.path.dirname(os.path.abspath(__file__))
-            ready_sound_path = os.path.join(script_dir, "sounds\\ready.mp3")
-            pygame.mixer.music.load(ready_sound_path)
-            pygame.mixer.music.play()
-            # Wait for the sound to finish playing
-            while pygame.mixer.music.get_busy():
-                time.sleep(0.1)
-            pygame.mixer.quit()
-        except Exception as sound_error:
-            print(f"Could not play ready sound: {sound_error}")
+        play_ready_sound()
         
-        # Wait for TAB key press
-        print("Press TAB key when you're ready to start the crystal prediction workflow...")
-        keyboard.wait('tab')
-        
-        print("Starting workflow in 0.2 seconds...")
-        time.sleep(0.2)  # Give user time to switch to the game window if needed
-        
-        success = main()
-        if success:
-            sys.exit(0)  # Success
-        else:
-            sys.exit(1)  # Failure
+        while True:  # Main loop for continuous execution
+            # Wait for TAB key press
+            print("Press TAB key when you're ready to start the crystal prediction workflow...")
+            keyboard.wait('tab')
+            
+            print("Starting workflow in 0.2 seconds...")
+            time.sleep(0.2)  # Give user time to switch to the game window if needed
+            
+            success = main()
+            
+            if success:
+                print("\n🔄 Workflow completed successfully! Waiting 3 seconds before next iteration...")
+                time.sleep(3)  # Wait 3 seconds before next iteration
+                print("Ready for next workflow iteration!")
+                play_ready_sound()  # Play sound to indicate ready for next iteration
+            else:
+                print("\n❌ Workflow failed. Exiting...")
+                sys.exit(1)  # Failure
+                
     except KeyboardInterrupt:
         print("\n\n⚠️  Workflow interrupted by user (Ctrl+C)")
         sys.exit(130)  # Standard exit code for Ctrl+C

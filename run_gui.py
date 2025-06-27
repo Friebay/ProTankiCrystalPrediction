@@ -15,7 +15,7 @@ class ProTankiHUD:
         self.root.resizable(False, False)       # Fixed size
         
         # Position on the left side of the screen
-        self.root.geometry("350x600+50+100")
+        self.root.geometry("350x700+50+100")
         
         # Configure style
         self.root.configure(bg='#2b2b2b')
@@ -52,6 +52,11 @@ class ProTankiHUD:
         self.red_scoreboard_label = self.create_content_label(main_frame, "Red Scoreboard: Loading...")
         self.blue_scoreboard_label = self.create_content_label(main_frame, "Blue Scoreboard: Loading...")
         
+        # Diamond Distribution Section
+        self.create_section(main_frame, "Diamond Distribution", '#00ffff')
+        self.red_diamonds_label = self.create_content_label(main_frame, "Red Diamonds: Loading...")
+        self.blue_diamonds_label = self.create_content_label(main_frame, "Blue Diamonds: Loading...")
+        
         # Status label
         self.status_label = tk.Label(
             main_frame,
@@ -69,7 +74,9 @@ class ProTankiHUD:
             'blue_score': 'blue_score.txt',
             'ratio': 'ratio.txt',
             'red_scoreboard': 'red_scoreboard.txt',
-            'blue_scoreboard': 'blue_scoreboard.txt'
+            'blue_scoreboard': 'blue_scoreboard.txt',
+            'red_diamonds': 'red_diamonds.txt',
+            'blue_diamonds': 'blue_diamonds.txt'
         }
         
         # Start the refresh thread
@@ -129,6 +136,32 @@ class ProTankiHUD:
         except Exception as e:
             return f"Error reading file: {str(e)}"
     
+    def read_diamond_file(self, file_key):
+        """Read diamond files and format them for display"""
+        try:
+            file_path = self.file_paths.get(file_key)
+            if not file_path:
+                return f"Unknown file key: {file_key}"
+                
+            if os.path.exists(file_path):
+                with open(file_path, 'r', encoding='utf-8') as file:
+                    lines = file.readlines()
+                    if lines:
+                        # Convert to integers and format as a comma-separated list
+                        diamonds = [int(line.strip()) for line in lines if line.strip().isdigit()]
+                        if len(diamonds) <= 5:
+                            return ', '.join(map(str, diamonds))
+                        else:
+                            # Show first 5 and indicate more
+                            first_five = ', '.join(map(str, diamonds[:5]))
+                            return f"{first_five}... ({len(diamonds)} total)"
+                    else:
+                        return "File is empty"
+            else:
+                return f"File '{file_path}' not found"
+        except Exception as e:
+            return f"Error reading file: {str(e)}"
+    
     def update_display(self):
         """Update the display with current file contents"""
         current_time = time.strftime("%H:%M:%S")
@@ -168,6 +201,18 @@ class ProTankiHUD:
         blue_scoreboard_content = self.read_file('blue_scoreboard')
         self.blue_scoreboard_label.config(text=f"Blue: {blue_scoreboard_content}")
         if "not found" in blue_scoreboard_content or "Error" in blue_scoreboard_content:
+            error_count += 1
+        
+        # Update Red Diamonds
+        red_diamonds_content = self.read_diamond_file('red_diamonds')
+        self.red_diamonds_label.config(text=f"Red: {red_diamonds_content}")
+        if "not found" in red_diamonds_content or "Error" in red_diamonds_content:
+            error_count += 1
+        
+        # Update Blue Diamonds
+        blue_diamonds_content = self.read_diamond_file('blue_diamonds')
+        self.blue_diamonds_label.config(text=f"Blue: {blue_diamonds_content}")
+        if "not found" in blue_diamonds_content or "Error" in blue_diamonds_content:
             error_count += 1
         
         # Update status
