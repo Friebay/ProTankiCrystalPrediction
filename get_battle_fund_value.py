@@ -24,7 +24,7 @@ img = cv2.imread(image_path)
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 # Resize image for better OCR accuracy
-scale_factor = 3  # Increase resolution
+scale_factor = 1  # Increase resolution
 resized = cv2.resize(gray, None, fx=scale_factor, fy=scale_factor, interpolation=cv2.INTER_CUBIC)
 
 # Apply thresholding for better contrast

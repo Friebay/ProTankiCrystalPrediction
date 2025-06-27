@@ -16,9 +16,6 @@ def take_screenshot():
     try:
         # Take a screenshot of the entire screen
         screenshot = pyautogui.screenshot()
-        
-        # Get screen width and height
-        screen_width, screen_height = screenshot.size
 
         # Crop the image to the specified region (from x=1700 to right edge, y=1025 to bottom)
         cropped_screenshot = screenshot.crop((1700, 1025, 1900, 1055))
@@ -45,15 +42,6 @@ def take_screenshot():
             while pygame.mixer.music.get_busy():
                 time.sleep(0.1)
             pygame.mixer.quit()
-        except ImportError:
-            print("pygame not installed. Trying alternative method...")
-            try:
-                import winsound
-                sound_path = os.path.join(script_dir, "screenshot.mp3")
-                # Convert to WAV if possible, or use system default sound
-                winsound.MessageBeep(winsound.MB_OK)
-            except Exception as sound_error:
-                print(f"Could not play sound: {sound_error}")
         except Exception as sound_error:
             print(f"Could not play sound: {sound_error}")
         
@@ -107,14 +95,6 @@ if __name__ == "__main__":
         while pygame.mixer.music.get_busy():
             time.sleep(0.1)
         pygame.mixer.quit()
-    except ImportError:
-        print("pygame not installed. Trying alternative method...")
-        try:
-            import winsound
-            # Use system default sound since winsound doesn't support MP3
-            winsound.MessageBeep(winsound.MB_OK)
-        except Exception as sound_error:
-            print(f"Could not play ready sound: {sound_error}")
     except Exception as sound_error:
         print(f"Could not play ready sound: {sound_error}")
     

@@ -5,13 +5,11 @@ import glob
 import os
 from datetime import datetime
 
-# --- Configuration ---
-
 # Set Tesseract path
 pytesseract.pytesseract.tesseract_cmd = r'C:\Users\zabit\AppData\Local\Programs\Tesseract-OCR\tesseract.exe'
 
 # Tesseract configuration for reading only digits from a single line of text
-TESSERACT_CONFIG = r'--oem 3 --psm 7 -c tessedit_char_whitelist=0123456789'
+TESSERACT_CONFIG = r'--oem 1 --psm 7 -c tessedit_char_whitelist=0123456789'
 
 def get_team_scores(image_path, debug=False):
     """
@@ -64,40 +62,27 @@ def get_team_scores(image_path, debug=False):
     # Note: In OpenCV, Hue is 0-179, Saturation is 0-255, Value is 0-255.
 
     # --- RED TEAM SCORE ---
-    # Red wraps around the 0/180 degree mark in the HSV color space, so we need two ranges.
-    lower_red1 = np.array([5, 153, 200])
-    upper_red1 = np.array([8, 207, 255])
-    lower_red2 = np.array([170, 100, 150])
-    upper_red2 = np.array([179, 255, 255])
+    lower_red = np.array([5, 153, 200])
+    upper_red = np.array([8, 207, 255])
 
     # --- BLUE TEAM SCORE ---
     lower_blue = np.array([103, 173, 150])
     upper_blue = np.array([108, 204, 255])
 
     # 4. Create masks to isolate colors
-    red_mask1 = cv2.inRange(hsv_img, lower_red1, upper_red1)
-    red_mask2 = cv2.inRange(hsv_img, lower_red2, upper_red2)
-    red_mask = cv2.bitwise_or(red_mask1, red_mask2) # Combine the two red ranges
+    red_mask = cv2.inRange(hsv_img, lower_red, upper_red)
 
     blue_mask = cv2.inRange(hsv_img, lower_blue, upper_blue)
     
     # Save step 3: Color masks
     if debug:
-        step3a_path = os.path.join(output_dir, f"images\\{base_name}_step3a_red_mask1.png")
-        cv2.imwrite(step3a_path, red_mask1)
-        print(f"Step 3a - Red mask 1 saved: {step3a_path}")
+        step3a_path = os.path.join(output_dir, f"images\\{base_name}_step3a_red_mask.png")
+        cv2.imwrite(step3a_path, red_mask)
+        print(f"Step 3a - Red mask saved: {step3a_path}")
         
-        step3b_path = os.path.join(output_dir, f"images\\{base_name}_step3b_red_mask2.png")
-        cv2.imwrite(step3b_path, red_mask2)
-        print(f"Step 3b - Red mask 2 saved: {step3b_path}")
-        
-        step3c_path = os.path.join(output_dir, f"images\\{base_name}_step3c_red_mask_combined.png")
-        cv2.imwrite(step3c_path, red_mask)
-        print(f"Step 3c - Combined red mask saved: {step3c_path}")
-        
-        step3d_path = os.path.join(output_dir, f"images\\{base_name}_step3d_blue_mask.png")
-        cv2.imwrite(step3d_path, blue_mask)
-        print(f"Step 3d - Blue mask saved: {step3d_path}")
+        step3b_path = os.path.join(output_dir, f"images\\{base_name}_step3b_blue_mask.png")
+        cv2.imwrite(step3b_path, blue_mask)
+        print(f"Step 3b - Blue mask saved: {step3b_path}")
 
     # 5. OCR the numbers from each mask
     red_score_str = ocr_from_mask(red_mask, output_dir if debug else None, base_name if debug else None, "red", debug)
@@ -146,7 +131,7 @@ def ocr_from_mask(mask, output_dir, base_name, color_name, debug=False):
     
     # Resize the image to be 2x bigger for better OCR accuracy
     height, width = inverted_mask.shape
-    resized_mask = cv2.resize(inverted_mask, (width * 3, height * 3), interpolation=cv2.INTER_NEAREST)
+    resized_mask = cv2.resize(inverted_mask, (width * 2, height * 2), interpolation=cv2.INTER_NEAREST)
     
     # Save step 6: Resized mask for OCR
     if debug and output_dir and base_name:
@@ -210,13 +195,10 @@ if __name__ == "__main__":
     # Set debug mode - change to True if you want to save processing step images
     debug = True
 
-    # Find the newest flag_crop PNG file
-    flag_files = glob.glob('images\\flag_crop.png')
-    if not flag_files:
-        raise FileNotFoundError("No flag_crop PNG files found in the current directory")
-
-    # Get the newest file based on modification time
-    image_path = max(flag_files, key=os.path.getmtime)
+    image_path = 'images\\flag_crop.png'
+    if not os.path.exists(image_path):
+        raise FileNotFoundError("flag_crop.png not found in the images directory")
+    
     print(f"Using image: {image_path}")
 
     scores = get_team_scores(image_path, debug=debug)

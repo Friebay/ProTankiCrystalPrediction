@@ -1,15 +1,30 @@
 import numpy as np
+import pickle
+import os
 from scipy.interpolate import PchipInterpolator
 from plot import predict_crystal_ratio
 
-
 def create_spline_model():
     """
-    Create the spline model using the same dataset from plot.py
+    Create the spline model using the same dataset from plot.py.
+    Uses caching to avoid rebuilding the model every time.
     
     Returns:
         PchipInterpolator: The fitted spline model
     """
+    cache_file = 'spline_model.pkl'
+    
+    # Check if cached model exists
+    if os.path.exists(cache_file):
+        try:
+            with open(cache_file, 'rb') as f:
+                spline = pickle.load(f)
+            print("Loaded spline model from cache")
+            return spline
+        except Exception as e:
+            print(f"Error loading cached model: {e}, rebuilding...")
+    
+    print("Building spline model...")
     # Define the dataset (same as in plot.py)
     dataset1 = np.array([
         [1.020, 1.525],
@@ -19,11 +34,9 @@ def create_spline_model():
         [1.163, 1.688],
         [1.193, 1.720],
         [1.250, 1.778],
-        [1.250, 1.778],
         [1.284, 1.811],
         [1.333, 1.862],
         [1.364, 1.887],
-        [1.389, 1.907],
         [1.389, 1.907],
         [1.400, 1.922],
         [1.417, 1.932],
@@ -40,13 +53,11 @@ def create_spline_model():
         [2.500, 2.595],
         [2.730, 2.659],
         [3.000, 2.750],
-        [3.000, 2.757],
         [3.125, 2.787],
         [3.333, 2.846],
         [3.511, 2.892],
         [4.000, 3.010],
         [4.667, 3.118],
-        [5.000, 3.168],
         [5.000, 3.168],
         [5.479, 3.229],
         [5.801, 3.265],
@@ -54,15 +65,12 @@ def create_spline_model():
         [6.000, 3.288],
         [6.301, 3.315],
         [7.500, 3.412],
-        [7.500, 3.412],
         [8.000, 3.444],
         [8.333, 3.462],
         [8.500, 3.474],
         [9.336, 3.516],
         [10.000, 3.550],
-        [10.000, 3.551],
         [11.111, 3.586],
-        [11.111, 3.591],
         [12.333, 3.625],
         [14.000, 3.666],
         [14.271, 3.673],
@@ -86,37 +94,17 @@ def create_spline_model():
     X_sorted = X[sorted_indices]
     y_sorted = y[sorted_indices]
     
-    # Handle duplicate x-values by averaging their y-values
-    unique_x = []
-    unique_y = []
-    current_x = None
-    y_sum = 0
-    count = 0
+    # Create the monotone cubic spline directly
+    spline = PchipInterpolator(X_sorted, y_sorted)
     
-    for i in range(len(X_sorted)):
-        if i > 0 and abs(X_sorted[i] - current_x) < 1e-10:  # Same x-value
-            y_sum += y_sorted[i]
-            count += 1
-        else:
-            if current_x is not None:
-                unique_x.append(current_x)
-                unique_y.append(y_sum / count)
-            
-            current_x = X_sorted[i]
-            y_sum = y_sorted[i]
-            count = 1
+    # Cache the model for future use
+    try:
+        with open(cache_file, 'wb') as f:
+            pickle.dump(spline, f)
+        print("Spline model cached successfully")
+    except Exception as e:
+        print(f"Warning: Could not cache spline model: {e}")
     
-    # Add the last group
-    if count > 0:
-        unique_x.append(current_x)
-        unique_y.append(y_sum / count)
-    
-    # Create arrays from the unique values
-    unique_x = np.array(unique_x)
-    unique_y = np.array(unique_y)
-    
-    # Create the monotone cubic spline
-    spline = PchipInterpolator(unique_x, unique_y)
     return spline
 
 
@@ -140,9 +128,6 @@ def read_score_files():
     
     except FileNotFoundError as e:
         print(f"Error: File not found - {e}")
-        return None, None
-    except ValueError as e:
-        print(f"Error: Invalid number format - {e}")
         return None, None
     except Exception as e:
         print(f"Error reading files: {e}")

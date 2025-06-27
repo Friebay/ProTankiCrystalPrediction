@@ -77,12 +77,19 @@ def take_screenshot():
     try:
         # Take a screenshot of the entire screen
         screenshot = pyautogui.screenshot()
+
+        # Store the original screenshot for later reuse
+        original_screenshot = screenshot
         
         # Get screen width and height
         screen_width, screen_height = screenshot.size
+
+        # Adjust coordinates relative to the original cropped area (add back the offset)
+        original_crop_x = 1400
+        original_crop_y = 1015
         
         # Crop the image to the specified region (from x=1400 to right edge, y=1015 to bottom)
-        cropped_screenshot = screenshot.crop((1400, 1015, screen_width, screen_height))
+        cropped_screenshot = screenshot.crop((original_crop_x, original_crop_y, screen_width, screen_height))
         
         # Generate a filename with timestamp
         filename = f"images\\protanki_screenshot.png"
@@ -107,14 +114,6 @@ def take_screenshot():
             while pygame.mixer.music.get_busy():
                 time.sleep(0.1)
             pygame.mixer.quit()
-        except ImportError:
-            print("pygame not installed. Trying alternative method...")
-            try:
-                import winsound
-                # Use system default sound since winsound doesn't support MP3
-                winsound.MessageBeep(winsound.MB_OK)
-            except Exception as sound_error:
-                print(f"Could not play sound: {sound_error}")
         except Exception as sound_error:
             print(f"Could not play sound: {sound_error}")
         
@@ -132,11 +131,7 @@ def take_screenshot():
             print(f"Cropping around diamond at center: {diamond_center}")
             
             # Load the screenshot to crop around diamond
-            screenshot_for_crop = pyautogui.screenshot()
-            
-            # Adjust coordinates relative to the original cropped area (add back the offset)
-            original_crop_x = 1400
-            original_crop_y = 1015
+            screenshot_for_crop = original_screenshot
             
             # Calculate absolute coordinates on the full screen
             absolute_diamond_x = original_crop_x + diamond_center[0]
@@ -162,10 +157,10 @@ def take_screenshot():
             diamond_filepath = os.path.join(script_dir, diamond_filename)
             battle_fund.save(diamond_filepath, optimize=False, compress_level=0)
             
-            print(f"Diamond-focused crop saved as: {diamond_filepath}")
-            print(f"Crop dimensions: {crop_x2 - crop_x1} x {crop_y2 - crop_y1} pixels")
-            print(f"Diamond position in original screen: ({absolute_diamond_x}, {absolute_diamond_y})")
-            print(f"Crop boundaries: ({crop_x1}, {crop_y1}) to ({crop_x2}, {crop_y2})")
+            # print(f"Diamond-focused crop saved as: {diamond_filepath}")
+            # print(f"Crop dimensions: {crop_x2 - crop_x1} x {crop_y2 - crop_y1} pixels")
+            # print(f"Diamond position in original screen: ({absolute_diamond_x}, {absolute_diamond_y})")
+            # print(f"Crop boundaries: ({crop_x1}, {crop_y1}) to ({crop_x2}, {crop_y2})")
             
             # Run OCR processing if enabled
             if OCR:
@@ -220,14 +215,6 @@ if __name__ == "__main__":
         while pygame.mixer.music.get_busy():
             time.sleep(0.1)
         pygame.mixer.quit()
-    except ImportError:
-        print("pygame not installed. Trying alternative method...")
-        try:
-            import winsound
-            # Use system default sound since winsound doesn't support MP3
-            winsound.MessageBeep(winsound.MB_OK)
-        except Exception as sound_error:
-            print(f"Could not play ready sound: {sound_error}")
     except Exception as sound_error:
         print(f"Could not play ready sound: {sound_error}")
     
@@ -236,6 +223,5 @@ if __name__ == "__main__":
     keyboard.wait('tab')
     
     # Make sure ProTanki is running and in full screen before executing this script
-    print("Taking screenshot in 3 seconds...")
-    time.sleep(0.2)  # Give you time to switch to the game window
+    print("Taking screenshot...")
     take_screenshot()

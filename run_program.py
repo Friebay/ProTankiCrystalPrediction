@@ -110,7 +110,7 @@ def main():
         return False
     
     # Add a small delay between steps
-    time.sleep(1)
+    # time.sleep(1)
     
     # Step 2: Score Screenshot  
     if not run_score_screenshot():
@@ -118,7 +118,7 @@ def main():
         return False
     
     # Add a small delay between steps
-    time.sleep(1)
+    # time.sleep(1)
     
     # Step 3: Scoreboard Screenshot
     if not run_scoreboard_screenshot():
@@ -126,7 +126,7 @@ def main():
         return False
     
     # Add a small delay between steps
-    time.sleep(1)
+    # time.sleep(1)
     
     # Step 4: Ratio Calculation and Crystal Prediction
     if not run_ratio_calculation():
@@ -160,14 +160,6 @@ if __name__ == "__main__":
             while pygame.mixer.music.get_busy():
                 time.sleep(0.1)
             pygame.mixer.quit()
-        except ImportError:
-            print("pygame not installed. Trying alternative method...")
-            try:
-                import winsound
-                # Use system default sound since winsound doesn't support MP3
-                winsound.MessageBeep(winsound.MB_OK)
-            except Exception as sound_error:
-                print(f"Could not play ready sound: {sound_error}")
         except Exception as sound_error:
             print(f"Could not play ready sound: {sound_error}")
         

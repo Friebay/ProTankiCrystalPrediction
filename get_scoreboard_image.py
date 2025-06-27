@@ -205,14 +205,6 @@ def take_screenshot():
             while pygame.mixer.music.get_busy():
                 time.sleep(0.1)
             pygame.mixer.quit()
-        except ImportError:
-            print("pygame not installed. Trying alternative method...")
-            try:
-                import winsound
-                # Use system default sound since winsound doesn't support MP3
-                winsound.MessageBeep(winsound.MB_OK)
-            except Exception as sound_error:
-                print(f"Could not play sound: {sound_error}")
         except Exception as sound_error:
             print(f"Could not play sound: {sound_error}")
         
@@ -341,14 +333,6 @@ if __name__ == "__main__":
         while pygame.mixer.music.get_busy():
             time.sleep(0.1)
         pygame.mixer.quit()
-    except ImportError:
-        print("pygame not installed. Trying alternative method...")
-        try:
-            import winsound
-            # Use system default sound since winsound doesn't support MP3
-            winsound.MessageBeep(winsound.MB_OK)
-        except Exception as sound_error:
-            print(f"Could not play ready sound: {sound_error}")
     except Exception as sound_error:
         print(f"Could not play ready sound: {sound_error}")
     
