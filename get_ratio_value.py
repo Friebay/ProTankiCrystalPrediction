@@ -200,19 +200,19 @@ def main():
         if ratio is not None:
             print(f"Winner to Loser ratio: {ratio:.2f}")
             
-            # Save ratio to file
-            try:
-                with open('ratio.txt', 'w') as file:
-                    file.write(str(ratio))
-                print(f"Ratio saved to ratio.txt")
-            except Exception as e:
-                print(f"Error saving ratio to file: {e}")
-            
             # Create the spline model and predict crystal distribution
             try:
                 spline = create_spline_model()
                 crystal_ratio = predict_crystal_ratio(ratio, spline)
                 print(f"Predicted Crystal Distribution Ratio: {crystal_ratio:.3f}")
+
+                # Save ratio to file
+                try:
+                    with open('ratio.txt', 'w') as file:
+                        file.write(str(crystal_ratio))
+                    print(f"Ratio saved to ratio.txt")
+                except Exception as e:
+                    print(f"Error saving ratio to file: {e}")
             except Exception as e:
                 print(f"Error predicting crystal ratio: {e}")
         else:

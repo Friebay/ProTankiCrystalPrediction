@@ -8,10 +8,10 @@ import os
 # Set Tesseract path
 pytesseract.pytesseract.tesseract_cmd = r'C:\Users\zabit\AppData\Local\Programs\Tesseract-OCR\tesseract.exe'
 
-# Find the newest diamond_crop_ PNG file
-diamond_files = glob.glob('diamond_crop_*.png')
+# Find the newest battle_fund PNG file
+diamond_files = glob.glob('battle_fund.png')
 if not diamond_files:
-    raise FileNotFoundError("No diamond_crop_ PNG files found in the current directory")
+    raise FileNotFoundError("No battle_fund PNG files found in the current directory")
 
 # Get the newest file based on modification time
 image_path = max(diamond_files, key=os.path.getmtime)

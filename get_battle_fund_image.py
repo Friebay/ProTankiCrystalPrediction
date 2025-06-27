@@ -53,10 +53,10 @@ def find_diamond_in_screenshot(screenshot_path):
             center_x = top_left[0] + template_width // 2
             center_y = top_left[1] + template_height // 2
             
-            print(f"Diamond found at coordinates: ({center_x}, {center_y})")
-            print(f"Match confidence: {max_val:.3f}")
-            print(f"Top-left corner: {top_left}")
-            print(f"Bottom-right corner: ({top_left[0] + template_width}, {top_left[1] + template_height})")
+            # print(f"Diamond found at coordinates: ({center_x}, {center_y})")
+            # print(f"Match confidence: {max_val:.3f}")
+            # print(f"Top-left corner: {top_left}")
+            # print(f"Bottom-right corner: ({top_left[0] + template_width}, {top_left[1] + template_height})")
             
             return {
                 'center': (center_x, center_y),
@@ -155,12 +155,12 @@ def take_screenshot():
             crop_y2 = min(screenshot_for_crop.height, absolute_diamond_y + crop_down)
             
             # Crop the image around the diamond
-            diamond_crop = screenshot_for_crop.crop((crop_x1, crop_y1, crop_x2, crop_y2))
+            battle_fund = screenshot_for_crop.crop((crop_x1, crop_y1, crop_x2, crop_y2))
             
             # Save the diamond-focused crop
-            diamond_filename = f"diamond_crop.png"
+            diamond_filename = f"battle_fund.png"
             diamond_filepath = os.path.join(script_dir, diamond_filename)
-            diamond_crop.save(diamond_filepath, optimize=False, compress_level=0)
+            battle_fund.save(diamond_filepath, optimize=False, compress_level=0)
             
             print(f"Diamond-focused crop saved as: {diamond_filepath}")
             print(f"Crop dimensions: {crop_x2 - crop_x1} x {crop_y2 - crop_y1} pixels")

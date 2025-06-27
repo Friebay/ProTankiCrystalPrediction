@@ -2,3 +2,6 @@
 red_scoreboard.txt
 blue_scoreboard.txt
 *.pyc
+ratio.txt
+blue_score.txt
+red_score.txt

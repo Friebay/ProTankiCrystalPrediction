@@ -4,10 +4,10 @@ import os
 import threading
 import time
 
-class BattleFundHUD:
+class ProTankiHUD:
     def __init__(self):
         self.root = tk.Tk()
-        self.root.title("Battle Fund HUD")
+        self.root.title("ProTanki Crystal Prediction HUD")
         
         # Configure window properties
         self.root.attributes('-topmost', True)  # Stay on top
@@ -15,36 +15,42 @@ class BattleFundHUD:
         self.root.resizable(False, False)       # Fixed size
         
         # Position on the left side of the screen
-        self.root.geometry("250x150+50+100")
+        self.root.geometry("350x600+50+100")
         
         # Configure style
         self.root.configure(bg='#2b2b2b')
         
-        # Create main frame
+        # Create main frame with scrollable area
         main_frame = tk.Frame(self.root, bg='#2b2b2b', padx=10, pady=10)
         main_frame.pack(fill='both', expand=True)
         
         # Title label
         title_label = tk.Label(
             main_frame, 
-            text="Battle Fund", 
+            text="ProTanki Crystal Prediction", 
             font=('Arial', 12, 'bold'),
             fg='#ffffff',
             bg='#2b2b2b'
         )
         title_label.pack(pady=(0, 10))
         
-        # Content label
-        self.content_label = tk.Label(
-            main_frame,
-            text="Loading...",
-            font=('Arial', 10),
-            fg='#00ff00',
-            bg='#2b2b2b',
-            wraplength=220,
-            justify='left'
-        )
-        self.content_label.pack(fill='both', expand=True)
+        # Battle Fund Section
+        self.create_section(main_frame, "Battle Fund", '#00ff00')
+        self.battle_fund_label = self.create_content_label(main_frame)
+        
+        # Scores Section
+        self.create_section(main_frame, "Team Scores", '#ffff00')
+        self.red_score_label = self.create_content_label(main_frame, "Red Score: Loading...")
+        self.blue_score_label = self.create_content_label(main_frame, "Blue Score: Loading...")
+        
+        # Crystal Distribution Section
+        self.create_section(main_frame, "Crystal Distribution", '#ff8800')
+        self.ratio_label = self.create_content_label(main_frame)
+        
+        # Scoreboards Section
+        self.create_section(main_frame, "Scoreboards", '#ff0088')
+        self.red_scoreboard_label = self.create_content_label(main_frame, "Red Scoreboard: Loading...")
+        self.blue_scoreboard_label = self.create_content_label(main_frame, "Blue Scoreboard: Loading...")
         
         # Status label
         self.status_label = tk.Label(
@@ -54,10 +60,17 @@ class BattleFundHUD:
             fg='#888888',
             bg='#2b2b2b'
         )
-        self.status_label.pack(pady=(10, 0))
+        self.status_label.pack(pady=(15, 0))
         
-        # File path
-        self.file_path = "battle_fund.txt"
+        # File paths
+        self.file_paths = {
+            'battle_fund': 'battle_fund.txt',
+            'red_score': 'red_score.txt', 
+            'blue_score': 'blue_score.txt',
+            'ratio': 'ratio.txt',
+            'red_scoreboard': 'red_scoreboard.txt',
+            'blue_scoreboard': 'blue_scoreboard.txt'
+        }
         
         # Start the refresh thread
         self.running = True
@@ -66,35 +79,102 @@ class BattleFundHUD:
         
         # Handle window close event
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
+    
+    def create_section(self, parent, title, color):
+        """Create a section header"""
+        section_label = tk.Label(
+            parent,
+            text=title,
+            font=('Arial', 10, 'bold'),
+            fg=color,
+            bg='#2b2b2b'
+        )
+        section_label.pack(anchor='w', pady=(10, 2))
+    
+    def create_content_label(self, parent, initial_text="Loading..."):
+        """Create a content label for displaying file contents"""
+        label = tk.Label(
+            parent,
+            text=initial_text,
+            font=('Arial', 9),
+            fg='#ffffff',
+            bg='#2b2b2b',
+            wraplength=320,
+            justify='left',
+            anchor='w'
+        )
+        label.pack(anchor='w', padx=(10, 0), pady=(0, 5))
+        return label
         
     def read_battle_fund_file(self):
         """Read the contents of battle_fund.txt file"""
+        return self.read_file('battle_fund')
+    
+    def read_file(self, file_key):
+        """Read the contents of a specified file"""
         try:
-            if os.path.exists(self.file_path):
-                with open(self.file_path, 'r', encoding='utf-8') as file:
+            file_path = self.file_paths.get(file_key)
+            if not file_path:
+                return f"Unknown file key: {file_key}"
+                
+            if os.path.exists(file_path):
+                with open(file_path, 'r', encoding='utf-8') as file:
                     content = file.read().strip()
                     if content:
                         return content
                     else:
                         return "File is empty"
             else:
-                return f"File '{self.file_path}' not found"
+                return f"File '{file_path}' not found"
         except Exception as e:
             return f"Error reading file: {str(e)}"
     
     def update_display(self):
         """Update the display with current file contents"""
-        content = self.read_battle_fund_file()
         current_time = time.strftime("%H:%M:%S")
+        error_count = 0
         
-        # Update content
-        self.content_label.config(text=content)
+        # Update Battle Fund
+        battle_fund_content = self.read_file('battle_fund')
+        self.battle_fund_label.config(text=f"Amount: {battle_fund_content}")
+        if "not found" in battle_fund_content or "Error" in battle_fund_content:
+            error_count += 1
+        
+        # Update Red Score
+        red_score_content = self.read_file('red_score')
+        self.red_score_label.config(text=f"Red Score: {red_score_content}")
+        if "not found" in red_score_content or "Error" in red_score_content:
+            error_count += 1
+        
+        # Update Blue Score
+        blue_score_content = self.read_file('blue_score')
+        self.blue_score_label.config(text=f"Blue Score: {blue_score_content}")
+        if "not found" in blue_score_content or "Error" in blue_score_content:
+            error_count += 1
+        
+        # Update Ratio
+        ratio_content = self.read_file('ratio')
+        self.ratio_label.config(text=f"Ratio: {ratio_content}")
+        if "not found" in ratio_content or "Error" in ratio_content:
+            error_count += 1
+        
+        # Update Red Scoreboard
+        red_scoreboard_content = self.read_file('red_scoreboard')
+        self.red_scoreboard_label.config(text=f"Red: {red_scoreboard_content}")
+        if "not found" in red_scoreboard_content or "Error" in red_scoreboard_content:
+            error_count += 1
+        
+        # Update Blue Scoreboard
+        blue_scoreboard_content = self.read_file('blue_scoreboard')
+        self.blue_scoreboard_label.config(text=f"Blue: {blue_scoreboard_content}")
+        if "not found" in blue_scoreboard_content or "Error" in blue_scoreboard_content:
+            error_count += 1
         
         # Update status
-        if "not found" in content or "Error" in content:
-            self.status_label.config(text=f"Status: Error - {current_time}", fg='#ff4444')
+        if error_count > 0:
+            self.status_label.config(text=f"Status: {error_count} errors - {current_time}", fg='#ff4444')
         else:
-            self.status_label.config(text=f"Status: OK - {current_time}", fg='#44ff44')
+            self.status_label.config(text=f"Status: All OK - {current_time}", fg='#44ff44')
     
     def refresh_loop(self):
         """Background thread that refreshes the display every 2 seconds"""
@@ -121,5 +201,5 @@ class BattleFundHUD:
 
 if __name__ == "__main__":
     # Create and run the HUD
-    hud = BattleFundHUD()
+    hud = ProTankiHUD()
     hud.run()

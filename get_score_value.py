@@ -66,7 +66,7 @@ def get_team_scores(image_path, debug=False):
     # --- RED TEAM SCORE ---
     # Red wraps around the 0/180 degree mark in the HSV color space, so we need two ranges.
     lower_red1 = np.array([5, 153, 200])
-    upper_red1 = np.array([10, 195, 255])
+    upper_red1 = np.array([8, 207, 255])
     lower_red2 = np.array([170, 100, 150])
     upper_red2 = np.array([179, 255, 255])
 
@@ -208,12 +208,12 @@ def save_scores_to_files(scores):
 # --- Main execution ---
 if __name__ == "__main__":
     # Set debug mode - change to True if you want to save processing step images
-    debug = False
+    debug = True
 
-    # Find the newest flag_crop_ PNG file
-    flag_files = glob.glob('flag_crop_*.png')
+    # Find the newest flag_crop PNG file
+    flag_files = glob.glob('flag_crop.png')
     if not flag_files:
-        raise FileNotFoundError("No flag_crop_ PNG files found in the current directory")
+        raise FileNotFoundError("No flag_crop PNG files found in the current directory")
 
     # Get the newest file based on modification time
     image_path = max(flag_files, key=os.path.getmtime)
@@ -222,9 +222,9 @@ if __name__ == "__main__":
     scores = get_team_scores(image_path, debug=debug)
 
     if scores:
-        print("\n--- OCR Results ---")
-        print(f"Red Team Score: {scores['red_score']}")
-        print(f"Blue Team Score: {scores['blue_score']}")
+        # print("\n--- OCR Results ---")
+        # print(f"Red Team Score: {scores['red_score']}")
+        # print(f"Blue Team Score: {scores['blue_score']}")
         
         # Save scores to text files
         save_scores_to_files(scores)

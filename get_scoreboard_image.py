@@ -63,10 +63,10 @@ def find_score_images_in_screenshot(screenshot_path):
                 center_x = top_left[0] + template_width // 2
                 center_y = top_left[1] + template_height // 2
                 
-                print(f"{score_image} found at coordinates: ({center_x}, {center_y})")
-                print(f"Match confidence: {max_val:.3f}")
-                print(f"Top-left corner: {top_left}")
-                print(f"Bottom-right corner: ({top_left[0] + template_width}, {top_left[1] + template_height})")
+                # print(f"{score_image} found at coordinates: ({center_x}, {center_y})")
+                # print(f"Match confidence: {max_val:.3f}")
+                # print(f"Top-left corner: {top_left}")
+                # print(f"Bottom-right corner: ({top_left[0] + template_width}, {top_left[1] + template_height})")
                 
                 results[score_image] = {
                     'center': (center_x, center_y),
@@ -84,6 +84,69 @@ def find_score_images_in_screenshot(screenshot_path):
         print(f"Error finding score images in screenshot: {e}")
         return None
 
+def find_exit_image_in_screenshot(screenshot_path):
+    """Find exit.png template in the screenshot and return its coordinates."""
+    try:
+        # Get the directory where this script is located
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        
+        # Load the screenshot
+        screenshot = cv2.imread(screenshot_path)
+        if screenshot is None:
+            print(f"Could not load screenshot: {screenshot_path}")
+            return None
+        
+        template_path = os.path.join(script_dir, "exit.png")
+        
+        # Check if template exists
+        if not os.path.exists(template_path):
+            print(f"Template file not found: {template_path}")
+            return None
+        
+        # Load the template
+        template = cv2.imread(template_path)
+        
+        if template is None:
+            print(f"Could not load template: {template_path}")
+            return None
+        
+        # Get template dimensions
+        template_height, template_width = template.shape[:2]
+        
+        # Perform template matching
+        result = cv2.matchTemplate(screenshot, template, cv2.TM_CCOEFF_NORMED)
+        
+        # Find the best match
+        min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
+        
+        # Set a threshold for matching (adjust as needed)
+        threshold = 0.8
+        
+        if max_val >= threshold:
+            # Calculate center coordinates of the found object
+            top_left = max_loc
+            center_x = top_left[0] + template_width // 2
+            center_y = top_left[1] + template_height // 2
+            
+            print(f"exit.png found at coordinates: ({center_x}, {center_y})")
+            print(f"Match confidence: {max_val:.3f}")
+            print(f"Top-left corner: {top_left}")
+            print(f"Bottom-right corner: ({top_left[0] + template_width}, {top_left[1] + template_height})")
+            
+            return {
+                'center': (center_x, center_y),
+                'top_left': top_left,
+                'bottom_right': (top_left[0] + template_width, top_left[1] + template_height),
+                'confidence': max_val
+            }
+        else:
+            print(f"exit.png not found. Best match confidence: {max_val:.3f} (threshold: {threshold})")
+            return None
+            
+    except Exception as e:
+        print(f"Error finding exit image in screenshot: {e}")
+        return None
+
 def take_screenshot():
     """Take a screenshot of a specific region and save it in the script directory."""
     try:
@@ -92,12 +155,35 @@ def take_screenshot():
         
         # Get screen width and height
         screen_width, screen_height = screenshot.size
-        # Crop the image to the specified region (from x=0 to right edge, y=0 to bottom)
-        cropped_screenshot = screenshot.crop((872, 38, 974, 1080))
         
-        # Generate a filename with timestamp
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"protanki_screenshot.png"
+        # First, take a temporary full screenshot to find the exit image
+        temp_filename = f"temp_screenshot.png"
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        temp_filepath = os.path.join(script_dir, temp_filename)
+        screenshot.save(temp_filepath, format='PNG', optimize=False, compress_level=0, quality=100)
+        
+        # Find exit image in the full screenshot
+        print("Searching for exit image to determine crop boundaries...")
+        exit_result = find_exit_image_in_screenshot(temp_filepath)
+        
+        # Delete temporary file
+        if os.path.exists(temp_filepath):
+            os.remove(temp_filepath)
+        
+        # Determine crop boundaries
+        if exit_result:
+            # Use exit image's top-left corner as the bottom boundary
+            crop_bottom = exit_result['top_left'][1]
+            print(f"Exit image found! Cropping bottom boundary set to y={crop_bottom}")
+        else:
+            # Fallback to original bottom boundary if exit image not found
+            crop_bottom = 1080
+            print("Exit image not found. Using default bottom boundary.")
+        
+        # Crop the image to the specified region (from x=0 to right edge, y=0 to exit image top)
+        cropped_screenshot = screenshot.crop((872, 38, 1269, crop_bottom))
+        
+        filename = f"scoreboard_image.png"
         
         # Get the directory where this script is located
         script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -132,6 +218,10 @@ def take_screenshot():
         
         print(f"Cropped screenshot saved as: {filepath}")
         
+        # Find exit image in the cropped screenshot (for verification)
+        print("Verifying exit image location in cropped screenshot...")
+        exit_result_cropped = find_exit_image_in_screenshot(filepath)
+        
         # Find score images in the screenshot
         print("Searching for score images in the screenshot...")
         score_results = find_score_images_in_screenshot(filepath)
@@ -140,6 +230,7 @@ def take_screenshot():
             print("Score image detection completed!")
             
             # Print locations of found score images
+            '''
             for score_image, result in score_results.items():
                 if result:
                     print(f"\n{score_image} location details:")
@@ -149,7 +240,7 @@ def take_screenshot():
                     print(f"  Match confidence: {result['confidence']:.3f}")
                 else:
                     print(f"\n{score_image}: Not found in screenshot")
-            
+            '''
             # Create additional crops if both score images are found
             red_result = score_results.get('score_red.png')
             blue_result = score_results.get('score_blue.png')
@@ -178,8 +269,8 @@ def take_screenshot():
                 red_crop = full_screenshot.crop((red_bottom_left_x, red_bottom_left_y, blue_top_right_x, blue_top_right_y))
                 red_scoreboard_path = os.path.join(script_dir, "red_scoreboard.png")
                 red_crop.save(red_scoreboard_path, format='PNG', optimize=False, compress_level=0, quality=100)
-                print(f"Red scoreboard saved as: {red_scoreboard_path}")
-                print(f"Red crop coordinates: ({red_bottom_left_x}, {red_bottom_left_y}) to ({blue_top_right_x}, {blue_top_right_y})")
+                # print(f"Red scoreboard saved as: {red_scoreboard_path}")
+                # print(f"Red crop coordinates: ({red_bottom_left_x}, {red_bottom_left_y}) to ({blue_top_right_x}, {blue_top_right_y})")
                 
                 # Create blue_scoreboard.png (from blue location to 974, 1080)
                 blue_top_left_x = crop_offset_x + blue_result['top_left'][0]
@@ -188,8 +279,8 @@ def take_screenshot():
                 blue_crop = full_screenshot.crop((blue_top_left_x, blue_top_left_y, blue_bottom_right_x, blue_bottom_right_y))
                 blue_scoreboard_path = os.path.join(script_dir, "blue_scoreboard.png")
                 blue_crop.save(blue_scoreboard_path, format='PNG', optimize=False, compress_level=0, quality=100)
-                print(f"Blue scoreboard saved as: {blue_scoreboard_path}")
-                print(f"Blue crop coordinates: ({blue_top_left_x}, {blue_top_left_y}) to ({blue_bottom_right_x}, {blue_bottom_right_y})")
+                # print(f"Blue scoreboard saved as: {blue_scoreboard_path}")
+                # print(f"Blue crop coordinates: ({blue_top_left_x}, {blue_top_left_y}) to ({blue_bottom_right_x}, {blue_bottom_right_y})")
                 
                 # Run OCR processing if enabled
                 if OCR:
@@ -204,9 +295,9 @@ def take_screenshot():
                                               capture_output=True, text=True, cwd=script_dir)
                         
                         if result.returncode == 0:
-                            print("Scoreboard OCR processing completed successfully!")
+                            # print("Scoreboard OCR processing completed successfully!")
                             if result.stdout:
-                                print("OCR output:")
+                                # print("OCR output:")
                                 print(result.stdout)
                         else:
                             print("Scoreboard OCR processing failed!")
