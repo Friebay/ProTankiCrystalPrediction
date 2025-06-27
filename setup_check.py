@@ -48,8 +48,8 @@ def check_required_files():
     """Check if required files exist."""
     required_files = [
         "diamond.png",
-        "ready.mp3", 
-        "screenshot.mp3"
+        "sounds/ready.mp3", 
+        "sounds/screenshot.mp3"
     ]
     
     missing_files = []

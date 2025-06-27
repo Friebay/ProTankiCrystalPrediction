@@ -23,7 +23,7 @@ def take_screenshot():
         # Crop the image to the specified region (from x=1700 to right edge, y=1025 to bottom)
         cropped_screenshot = screenshot.crop((1700, 1025, 1900, 1055))
         
-        filename = f"flag_crop.png"
+        filename = f"images\\flag_crop.png"
         
         # Get the directory where this script is located
         script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -38,7 +38,7 @@ def take_screenshot():
             import pygame
             pygame.mixer.init()
             # Assuming screenshot.mp3 is in the same directory as the script
-            sound_path = os.path.join(script_dir, "screenshot.mp3")
+            sound_path = os.path.join(script_dir, "sounds\\screenshot.mp3")
             pygame.mixer.music.load(sound_path)
             pygame.mixer.music.play()
             # Wait for the sound to finish playing
@@ -100,7 +100,7 @@ if __name__ == "__main__":
         pygame.mixer.init()
         # Get the directory where this script is located
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        ready_sound_path = os.path.join(script_dir, "ready.mp3")
+        ready_sound_path = os.path.join(script_dir, "sounds\\ready.mp3")
         pygame.mixer.music.load(ready_sound_path)
         pygame.mixer.music.play()
         # Wait for the sound to finish playing

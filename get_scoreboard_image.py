@@ -16,7 +16,7 @@ def find_score_images_in_screenshot(screenshot_path):
     results = {}
     
     # Score image files to search for
-    score_images = ['score_red.png', 'score_blue.png']
+    score_images = ['images\\score_red.png', 'images\\score_blue.png']
     
     try:
         # Get the directory where this script is located
@@ -96,7 +96,7 @@ def find_exit_image_in_screenshot(screenshot_path):
             print(f"Could not load screenshot: {screenshot_path}")
             return None
         
-        template_path = os.path.join(script_dir, "exit.png")
+        template_path = os.path.join(script_dir, "images\\exit.png")
         
         # Check if template exists
         if not os.path.exists(template_path):
@@ -157,7 +157,7 @@ def take_screenshot():
         screen_width, screen_height = screenshot.size
         
         # First, take a temporary full screenshot to find the exit image
-        temp_filename = f"temp_screenshot.png"
+        temp_filename = f"images\\temp_screenshot.png"
         script_dir = os.path.dirname(os.path.abspath(__file__))
         temp_filepath = os.path.join(script_dir, temp_filename)
         screenshot.save(temp_filepath, format='PNG', optimize=False, compress_level=0, quality=100)
@@ -183,7 +183,7 @@ def take_screenshot():
         # Crop the image to the specified region (from x=0 to right edge, y=0 to exit image top)
         cropped_screenshot = screenshot.crop((872, 38, 1269, crop_bottom))
         
-        filename = f"scoreboard_image.png"
+        filename = f"images\\scoreboard_image.png"
         
         # Get the directory where this script is located
         script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -198,7 +198,7 @@ def take_screenshot():
             import pygame
             pygame.mixer.init()
             # Assuming screenshot.mp3 is in the same directory as the script
-            sound_path = os.path.join(script_dir, "screenshot.mp3")
+            sound_path = os.path.join(script_dir, "sounds\\screenshot.mp3")
             pygame.mixer.music.load(sound_path)
             pygame.mixer.music.play()
             # Wait for the sound to finish playing
@@ -242,9 +242,9 @@ def take_screenshot():
                     print(f"\n{score_image}: Not found in screenshot")
             '''
             # Create additional crops if both score images are found
-            red_result = score_results.get('score_red.png')
-            blue_result = score_results.get('score_blue.png')
-            
+            red_result = score_results.get('images\\score_red.png')
+            blue_result = score_results.get('images\\score_blue.png')
+
             if red_result and blue_result:
                 print("\nCreating scoreboard crops...")
                 
@@ -267,7 +267,7 @@ def take_screenshot():
                 
                 # Create red_scoreboard.png (from red bottom-left to blue top-right)
                 red_crop = full_screenshot.crop((red_bottom_left_x, red_bottom_left_y, blue_top_right_x, blue_top_right_y))
-                red_scoreboard_path = os.path.join(script_dir, "red_scoreboard.png")
+                red_scoreboard_path = os.path.join(script_dir, "images\\red_scoreboard.png")
                 red_crop.save(red_scoreboard_path, format='PNG', optimize=False, compress_level=0, quality=100)
                 # print(f"Red scoreboard saved as: {red_scoreboard_path}")
                 # print(f"Red crop coordinates: ({red_bottom_left_x}, {red_bottom_left_y}) to ({blue_top_right_x}, {blue_top_right_y})")
@@ -277,7 +277,7 @@ def take_screenshot():
                 blue_top_left_y = crop_offset_y + blue_result['top_left'][1] + 19
 
                 blue_crop = full_screenshot.crop((blue_top_left_x, blue_top_left_y, blue_bottom_right_x, blue_bottom_right_y))
-                blue_scoreboard_path = os.path.join(script_dir, "blue_scoreboard.png")
+                blue_scoreboard_path = os.path.join(script_dir, "images\\blue_scoreboard.png")
                 blue_crop.save(blue_scoreboard_path, format='PNG', optimize=False, compress_level=0, quality=100)
                 # print(f"Blue scoreboard saved as: {blue_scoreboard_path}")
                 # print(f"Blue crop coordinates: ({blue_top_left_x}, {blue_top_left_y}) to ({blue_bottom_right_x}, {blue_bottom_right_y})")
@@ -334,7 +334,7 @@ if __name__ == "__main__":
         pygame.mixer.init()
         # Get the directory where this script is located
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        ready_sound_path = os.path.join(script_dir, "ready.mp3")
+        ready_sound_path = os.path.join(script_dir, "sounds\\ready.mp3")
         pygame.mixer.music.load(ready_sound_path)
         pygame.mixer.music.play()
         # Wait for the sound to finish playing

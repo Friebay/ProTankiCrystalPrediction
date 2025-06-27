@@ -44,7 +44,7 @@ def get_team_scores(image_path, debug=False):
 
     # Save step 1: Original image
     if debug:
-        step1_path = os.path.join(output_dir, f"{base_name}_step1_original.png")
+        step1_path = os.path.join(output_dir, f"images\\{base_name}_step1_original.png")
         cv2.imwrite(step1_path, img)
         print(f"Step 1 - Original image saved: {step1_path}")
 
@@ -54,7 +54,7 @@ def get_team_scores(image_path, debug=False):
     
     # Save step 2: HSV image
     if debug:
-        step2_path = os.path.join(output_dir, f"{base_name}_step2_hsv.png")
+        step2_path = os.path.join(output_dir, f"images\\{base_name}_step2_hsv.png")
         cv2.imwrite(step2_path, hsv_img)
         print(f"Step 2 - HSV image saved: {step2_path}")
 
@@ -83,19 +83,19 @@ def get_team_scores(image_path, debug=False):
     
     # Save step 3: Color masks
     if debug:
-        step3a_path = os.path.join(output_dir, f"{base_name}_step3a_red_mask1.png")
+        step3a_path = os.path.join(output_dir, f"images\\{base_name}_step3a_red_mask1.png")
         cv2.imwrite(step3a_path, red_mask1)
         print(f"Step 3a - Red mask 1 saved: {step3a_path}")
         
-        step3b_path = os.path.join(output_dir, f"{base_name}_step3b_red_mask2.png")
+        step3b_path = os.path.join(output_dir, f"images\\{base_name}_step3b_red_mask2.png")
         cv2.imwrite(step3b_path, red_mask2)
         print(f"Step 3b - Red mask 2 saved: {step3b_path}")
         
-        step3c_path = os.path.join(output_dir, f"{base_name}_step3c_red_mask_combined.png")
+        step3c_path = os.path.join(output_dir, f"images\\{base_name}_step3c_red_mask_combined.png")
         cv2.imwrite(step3c_path, red_mask)
         print(f"Step 3c - Combined red mask saved: {step3c_path}")
         
-        step3d_path = os.path.join(output_dir, f"{base_name}_step3d_blue_mask.png")
+        step3d_path = os.path.join(output_dir, f"images\\{base_name}_step3d_blue_mask.png")
         cv2.imwrite(step3d_path, blue_mask)
         print(f"Step 3d - Blue mask saved: {step3d_path}")
 
@@ -130,7 +130,7 @@ def ocr_from_mask(mask, output_dir, base_name, color_name, debug=False):
     
     # Save step 4: Dilated mask
     if debug and output_dir and base_name:
-        step4_path = os.path.join(output_dir, f"{base_name}_step4_{color_name}_dilated.png")
+        step4_path = os.path.join(output_dir, f"images\\{base_name}_step4_{color_name}_dilated.png")
         cv2.imwrite(step4_path, dilated_mask)
         print(f"Step 4 - {color_name.capitalize()} dilated mask saved: {step4_path}")
     
@@ -140,7 +140,7 @@ def ocr_from_mask(mask, output_dir, base_name, color_name, debug=False):
     
     # Save step 5: Inverted mask ready for OCR
     if debug and output_dir and base_name:
-        step5_path = os.path.join(output_dir, f"{base_name}_step5_{color_name}_inverted_for_ocr.png")
+        step5_path = os.path.join(output_dir, f"images\\{base_name}_step5_{color_name}_inverted_for_ocr.png")
         cv2.imwrite(step5_path, inverted_mask)
         print(f"Step 5 - {color_name.capitalize()} inverted mask for OCR saved: {step5_path}")
     
@@ -150,7 +150,7 @@ def ocr_from_mask(mask, output_dir, base_name, color_name, debug=False):
     
     # Save step 6: Resized mask for OCR
     if debug and output_dir and base_name:
-        step6_path = os.path.join(output_dir, f"{base_name}_step6_{color_name}_resized_2x_for_ocr.png")
+        step6_path = os.path.join(output_dir, f"images\\{base_name}_step6_{color_name}_resized_2x_for_ocr.png")
         cv2.imwrite(step6_path, resized_mask)
         print(f"Step 6 - {color_name.capitalize()} resized 2x mask for OCR saved: {step6_path}")
 
@@ -211,7 +211,7 @@ if __name__ == "__main__":
     debug = True
 
     # Find the newest flag_crop PNG file
-    flag_files = glob.glob('flag_crop.png')
+    flag_files = glob.glob('images\\flag_crop.png')
     if not flag_files:
         raise FileNotFoundError("No flag_crop PNG files found in the current directory")
 

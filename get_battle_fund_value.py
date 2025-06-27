@@ -9,7 +9,7 @@ import os
 pytesseract.pytesseract.tesseract_cmd = r'C:\Users\zabit\AppData\Local\Programs\Tesseract-OCR\tesseract.exe'
 
 # Find the newest battle_fund PNG file
-diamond_files = glob.glob('battle_fund.png')
+diamond_files = glob.glob('images\\battle_fund.png')
 if not diamond_files:
     raise FileNotFoundError("No battle_fund PNG files found in the current directory")
 

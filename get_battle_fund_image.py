@@ -2,7 +2,7 @@ import pyautogui
 import os
 from datetime import datetime
 import time
-import keyboard  # Added for key press detection
+import keyboard
 import cv2
 import numpy as np
 import subprocess
@@ -16,7 +16,7 @@ def find_diamond_in_screenshot(screenshot_path):
     try:
         # Get the directory where this script is located
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        template_path = os.path.join(script_dir, "diamond.png")
+        template_path = os.path.join(script_dir, "images\\diamond.png")
         
         # Check if template exists
         if not os.path.exists(template_path):
@@ -85,7 +85,7 @@ def take_screenshot():
         cropped_screenshot = screenshot.crop((1400, 1015, screen_width, screen_height))
         
         # Generate a filename with timestamp
-        filename = f"protanki_screenshot.png"
+        filename = f"images\\protanki_screenshot.png"
         
         # Get the directory where this script is located
         script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -100,7 +100,7 @@ def take_screenshot():
             import pygame
             pygame.mixer.init()
             # Assuming screenshot.mp3 is in the same directory as the script
-            sound_path = os.path.join(script_dir, "screenshot.mp3")
+            sound_path = os.path.join(script_dir, "sounds\\screenshot.mp3")
             pygame.mixer.music.load(sound_path)
             pygame.mixer.music.play()
             # Wait for the sound to finish playing
@@ -158,7 +158,7 @@ def take_screenshot():
             battle_fund = screenshot_for_crop.crop((crop_x1, crop_y1, crop_x2, crop_y2))
             
             # Save the diamond-focused crop
-            diamond_filename = f"battle_fund.png"
+            diamond_filename = f"images\\battle_fund.png"
             diamond_filepath = os.path.join(script_dir, diamond_filename)
             battle_fund.save(diamond_filepath, optimize=False, compress_level=0)
             
@@ -213,7 +213,7 @@ if __name__ == "__main__":
         pygame.mixer.init()
         # Get the directory where this script is located
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        ready_sound_path = os.path.join(script_dir, "ready.mp3")
+        ready_sound_path = os.path.join(script_dir, "sounds\\ready.mp3")
         pygame.mixer.music.load(ready_sound_path)
         pygame.mixer.music.play()
         # Wait for the sound to finish playing

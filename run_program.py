@@ -153,7 +153,7 @@ if __name__ == "__main__":
             pygame.mixer.init()
             # Get the directory where this script is located
             script_dir = os.path.dirname(os.path.abspath(__file__))
-            ready_sound_path = os.path.join(script_dir, "ready.mp3")
+            ready_sound_path = os.path.join(script_dir, "sounds\\ready.mp3")
             pygame.mixer.music.load(ready_sound_path)
             pygame.mixer.music.play()
             # Wait for the sound to finish playing

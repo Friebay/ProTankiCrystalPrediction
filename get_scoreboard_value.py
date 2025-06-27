@@ -55,7 +55,7 @@ def process_scoreboard_image(image_path, scoreboard_name):
             return None
         
         if DEBUG:
-            debug_original = os.path.join(debug_dir, f"{clean_name}_01_original.png")
+            debug_original = os.path.join(debug_dir, f"images\\{clean_name}_01_original.png")
             cv2.imwrite(debug_original, img)
             print(f"Debug: Saved original image to {debug_original}")
         
@@ -63,7 +63,7 @@ def process_scoreboard_image(image_path, scoreboard_name):
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         
         if DEBUG:
-            debug_gray = os.path.join(debug_dir, f"{clean_name}_02_grayscale.png")
+            debug_gray = os.path.join(debug_dir, f"images\\{clean_name}_02_grayscale.png")
             cv2.imwrite(debug_gray, gray)
             print(f"Debug: Saved grayscale image to {debug_gray}")
         
@@ -72,7 +72,7 @@ def process_scoreboard_image(image_path, scoreboard_name):
         resized = cv2.resize(gray, None, fx=scale_factor, fy=scale_factor, interpolation=cv2.INTER_CUBIC)
         
         if DEBUG:
-            debug_resized = os.path.join(debug_dir, f"{clean_name}_03_resized.png")
+            debug_resized = os.path.join(debug_dir, f"images\\{clean_name}_03_resized.png")
             cv2.imwrite(debug_resized, resized)
             print(f"Debug: Saved resized image to {debug_resized}")
         
@@ -80,7 +80,7 @@ def process_scoreboard_image(image_path, scoreboard_name):
         _, thresh = cv2.threshold(resized, 150, 255, cv2.THRESH_BINARY_INV)
         
         if DEBUG:
-            debug_thresh = os.path.join(debug_dir, f"{clean_name}_04_threshold.png")
+            debug_thresh = os.path.join(debug_dir, f"images\\{clean_name}_04_threshold.png")
             cv2.imwrite(debug_thresh, thresh)
             print(f"Debug: Saved threshold image to {debug_thresh}")
         
@@ -88,7 +88,7 @@ def process_scoreboard_image(image_path, scoreboard_name):
         thresh = cv2.bitwise_not(thresh)
         
         if DEBUG:
-            debug_final = os.path.join(debug_dir, f"{clean_name}_05_final_processed.png")
+            debug_final = os.path.join(debug_dir, f"images\\{clean_name}_05_final_processed.png")
             cv2.imwrite(debug_final, thresh)
             print(f"Debug: Saved final processed image to {debug_final}")
         
@@ -110,8 +110,8 @@ def process_scoreboard_image(image_path, scoreboard_name):
         return None
 
 # Find the newest red_scoreboard.png and blue_scoreboard.png files
-red_files = glob.glob('red_scoreboard.png')
-blue_files = glob.glob('blue_scoreboard.png')
+red_files = glob.glob('images\\red_scoreboard.png')
+blue_files = glob.glob('images\\blue_scoreboard.png')
 
 results = {}
 
