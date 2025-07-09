@@ -47,7 +47,7 @@ def check_tesseract():
 def check_required_files():
     """Check if required files exist."""
     required_files = [
-        "diamond.png",
+        "images/diamond.png",
         "sounds/ready.mp3", 
         "sounds/screenshot.mp3"
     ]

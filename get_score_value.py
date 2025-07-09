@@ -181,12 +181,6 @@ def save_scores_to_files(scores):
             f.write(blue_score_value)
         print(f"Blue score saved to: {blue_score_file}")
         
-        # Save combined scores with timestamp to a log file
-        scores_log_file = os.path.join(script_dir, "scores_log.txt")
-        with open(scores_log_file, 'a') as f:
-            f.write(f"{timestamp} - Red: {red_score_value}, Blue: {blue_score_value}\n")
-        print(f"Scores logged to: {scores_log_file}")
-        
     except Exception as e:
         print(f"Error saving scores to files: {e}")
 

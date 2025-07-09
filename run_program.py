@@ -97,6 +97,28 @@ def run_ratio_calculation():
         print(f"✗ Error in ratio calculation: {e}")
         return False
 
+def run_diamond_calculation():
+    """Run the crystal distribution calculation from get_diamond_value.py"""
+    try:
+
+        print("STEP 5: Calculating Diamond Distribution")
+
+        
+        from get_diamond_value import print_crystal_distribution, save_team_crystals_to_files
+        
+        # Calculate and display crystal distribution
+        print_crystal_distribution()
+        
+        # Save individual crystal distributions to files
+        save_team_crystals_to_files()
+        
+        print("✓ Diamond distribution calculation completed")
+        return True
+        
+    except Exception as e:
+        print(f"✗ Error in diamond calculation: {e}")
+        return False
+
 def main():
     """Main function that orchestrates the entire workflow"""
     print("ProTanki Crystal Prediction - Starting Full Workflow")
@@ -131,6 +153,14 @@ def main():
     # Step 4: Ratio Calculation and Crystal Prediction
     if not run_ratio_calculation():
         print("\n❌ Workflow stopped due to ratio calculation failure")
+        return False
+    
+    # Add a small delay between steps
+    # time.sleep(1)
+    
+    # Step 5: Diamond Distribution Calculation
+    if not run_diamond_calculation():
+        print("\n❌ Workflow stopped due to diamond calculation failure")
         return False
     
     # Calculate total execution time
