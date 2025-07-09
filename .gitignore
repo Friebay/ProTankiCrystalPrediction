@@ -1,4 +1,3 @@
-*.png
 red_scoreboard.txt
 blue_scoreboard.txt
 *.pyc
@@ -8,3 +7,10 @@ red_score.txt
 battle_fund.txt
 scores_log.txt
 spline_model.pkl
+images/battle_fund.png
+images/blue_scoreboard.png
+images/flag_crop.png
+images/protanki_screenshot.png
+images/red_scoreboard.png
+images/scoreboard_image.png
+/processing_steps
