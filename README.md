@@ -12,6 +12,19 @@ The system finds a correlation between player score and battle fund, requiring m
 
 **Data Sources**: Personal gameplay data and community screenshots from the ProTanki Discord server.
 
+
+## Program Demonstration
+
+![Program Demo](demonstration.gif)
+
+The GIF above demonstrates the GUI of the program and shows how it works in practice. Users can simply run the program and use the interface to capture and analyze their ProTanki match data to predict crystal rewards.
+
+## Crystal Distribution Analysis
+
+![Crystal Distribution](crystal_distribution.png)
+
+The chart above shows the relationship between the ratio of flags (winning team flags divided by losing team flags) on the x-axis and the crystal distribution between the teams ratio on the y-axis. The red dots represent real data points collected from actual matches, while the blue line shows a monotonic cubic spline estimation that helps predict crystal distribution based on the flag ratio.
+
 ## Prerequisites
 
 - **Python**
@@ -67,15 +80,3 @@ The system finds a correlation between player score and battle fund, requiring m
    - Wait for **3 beep sounds** to confirm the process is complete
    - **Release the TAB key** and check the results on the GUI
    - If some data fields show "N/A", **hold TAB again** until all data fields are properly filled
-
-## Program Demonstration
-
-![Program Demo](demonstration.gif)
-
-The GIF above demonstrates the GUI of the program and shows how it works in practice. Users can simply run the program and use the interface to capture and analyze their ProTanki match data to predict crystal rewards.
-
-## Crystal Distribution Analysis
-
-![Crystal Distribution](crystal_distribution.png)
-
-The chart above shows the relationship between the ratio of flags (winning team flags divided by losing team flags) on the x-axis and the crystal distribution between the teams ratio on the y-axis. The red dots represent real data points collected from actual matches, while the blue line shows a monotonic cubic spline estimation that helps predict crystal distribution based on the flag ratio.
